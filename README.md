@@ -14,7 +14,7 @@ Turn your Philips Hue lights in a room-sized ambilight. No external libraries ar
 Future work
 -----------
 
-Some more work needs to be done, especially on the ambilight mode. The biggest issue is that is takes approx 1 second for the bridge to adjust the lights, per light. Therefore, the color of the lights is at least 1 second behind on the video.
+Some more work needs to be done, especially on the ambilight mode. The biggest issue is that is takes approx 1 second for the bridge to adjust the lights, per light. The ambilight is therefore at least 1 second behind on the video traks, ruining the effect.
 
 Some other, smaller issues:
  - Better support to detect if a movie is playing / paused or stopped (the callback function didn't seem to work for me)
@@ -24,8 +24,6 @@ Some other, smaller issues:
 Contributing
 ------------
 
-Want to contribute? Great! I don't plan on actvily maintaining this code, but will accept push requests.
+Want to contribute? Great! I don't plan on actvily maintaining this code, but will accept push requests. You can contact me on my Github profile page.
 
 Feel free to fork away and have fun!
-
-You can contact me on my Github profile page.
