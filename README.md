@@ -1,10 +1,7 @@
 script.xbmc.hue
 ===============
 
-This is an XBMC add-on that controls Philips Hue lights. It supports two modes of operations:
-
-1) Theatre mode
-2) Ambilight mode
+This is an XBMC add-on that controls Philips Hue lights. It supports two modes of operations: "Theatre mode" and "Ambilight mode:.
 
 ### Theatre mode
 
@@ -12,9 +9,7 @@ Dims the the Philips Hue lights as soon as a movie starts playing, and turns the
 
 ### Ambilight mode
 
-Turn your Philips Hue lights in a room-sized ambilight.
-
-No external libraries are required. Just install the add-on, and use the built-in "bridge discovery" to discover your bridge and register an account.
+Turn your Philips Hue lights in a room-sized ambilight. No external libraries are required. Just install the add-on, and use the built-in "bridge discovery" to discover your bridge and register an account.
 
 Future work
 -----------
@@ -26,9 +21,11 @@ Some other, smaller issues:
  - Monitor changes in the add-on's settings. Changes are now effective after restarting XBMC
  - Support a variable number of lights
 
-Fork away
----------
+Contributing
+------------
 
-I don't intend to actively maintain this code.
+Want to contribute? Great! I don't plan on actvily maintaining this code, but will accept push requests.
 
-So, fork away and have fun!
+Feel free to fork away and have fun!
+
+You can contact me on my Github profile page.
