@@ -18,7 +18,7 @@ Copy the `script.xbmc.hue` folder to your XBMC add-ons. For Mac OSX users: `/Use
 
 Restart XBMC and configure the add-on:
 
-System -> Settings -> Add-ons -> Enabled add-ons -> Services
+System -> Settings -> Add-ons -> Enabled add-ons -> Services -> XBMC Philips Hue
 
 Future work
 -----------
