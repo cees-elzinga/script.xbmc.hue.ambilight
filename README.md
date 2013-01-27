@@ -11,6 +11,15 @@ Dims the the Philips Hue lights as soon as a movie starts playing, and turns the
 
 Turn your Philips Hue lights in a room-sized ambilight. No external libraries are required. Just install the add-on, and use the built-in "bridge discovery" to discover your bridge and register an account.
 
+Installation
+------------
+
+Copy the `script.xbmc.hue` folder to your XBMC add-ons. On Mac OSX, the folder is located at `/Users/username/Library/Application Support/XBMC/addons/`.
+
+Restart XBMC, and configure the add-on:
+
+System -> Settings -> Add-ons -> Enabled add-ons -> Services
+
 Future work
 -----------
 
