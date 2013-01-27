@@ -14,9 +14,9 @@ Turn your Philips Hue lights in a room-sized ambilight. No external libraries ar
 Installation
 ------------
 
-Copy the `script.xbmc.hue` folder to your XBMC add-ons. On Mac OSX, the folder is located at `/Users/username/Library/Application Support/XBMC/addons/`.
+Copy the `script.xbmc.hue` folder to your XBMC add-ons. For Mac OSX users: `/Users/username/Library/Application Support/XBMC/addons/`.
 
-Restart XBMC, and configure the add-on:
+Restart XBMC and configure the add-on:
 
 System -> Settings -> Add-ons -> Enabled add-ons -> Services
 
