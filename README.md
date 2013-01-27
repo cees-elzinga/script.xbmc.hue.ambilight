@@ -9,7 +9,7 @@ Dims the the Philips Hue lights as soon as a movie starts playing, and turns the
 
 ### Ambilight mode
 
-Turn your Philips Hue lights in a room-sized ambilight. No external libraries are required. Just install the add-on, and use the built-in "bridge discovery" to discover your bridge and register an account.
+Turn your Philips Hue lights in a room-sized ambilight. No external libraries are required. Just install the add-on, and use the built-in "bridge discovery" to discover your bridge and register the XBMC player.
 
 Installation
 ------------
@@ -23,7 +23,7 @@ System -> Settings -> Add-ons -> Enabled add-ons -> Services -> XBMC Philips Hue
 Future work
 -----------
 
-Some more work needs to be done, especially on the ambilight mode. The biggest issue is that is takes approx 1 second for the bridge to adjust the lights, per light. The ambilight is therefore at least 1 second behind on the video traks, ruining the effect.
+Some more work needs to be done on the "Ambilight mode". The biggest issue is that it takes approximately 1 second to adjust the lights. The time is spent by the bridge, and I don't see any quick way to improve it. For now - "Ambilight mode" works but will be out of sync with the video streams for at least 1 second.
 
 Some other, smaller issues:
  - Better support to detect if a movie is playing / paused or stopped (the callback function didn't seem to work for me)
