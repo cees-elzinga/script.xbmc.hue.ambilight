@@ -9,10 +9,12 @@ Dims the the Philips Hue lights as soon as a movie starts playing, and turns the
 
 ### Ambilight mode
 
-Turn your Philips Hue lights in a room-sized ambilight. No external libraries are required. Just install the add-on, and use the built-in "bridge discovery" to discover your bridge and register the XBMC player.
+Turn your Philips Hue lights in a room-sized ambilight. Just install the add-on, and use the built-in "bridge discovery" to discover your bridge and register the XBMC player.
 
 Installation
 ------------
+
+Make sure the Python PIL library is installed (http://www.pythonware.com/products/pil/).
 
 Copy the `script.xbmc.hue` folder to your XBMC add-ons. For Mac OSX users: `/Users/username/Library/Application Support/XBMC/addons/`.
 
