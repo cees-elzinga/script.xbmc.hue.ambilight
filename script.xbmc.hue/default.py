@@ -6,7 +6,6 @@ import sys
 import colorsys
 import os
 import datetime
-from pil import Image
 
 __addon__      = xbmcaddon.Addon()
 __cwd__        = __addon__.getAddonInfo('path')
@@ -16,13 +15,21 @@ sys.path.append (__resource__)
 
 from settings import *
 from tools import *
-settings = settings()
 
 SCRIPTNAME = "XBMC Hue"
 
 def log(msg):
   global SCRIPTNAME
   xbmc.log("%s: %s" % (SCRIPTNAME, msg))
+
+try:
+  from pil import Image
+except ImportError:
+  try:
+    from PIL import Image
+  except ImportError:
+    log("ERROR: Could not locate required library PIL")
+    notify("XBMC Hue", "ERROR: Could not import Python PIL")
 
 log("Service started")
 # Assume a ratio of 4/3
@@ -40,12 +47,15 @@ class Hue:
   params = None
   connected = None
   last_state = None
+  settings = None
 
-  def __init__(self):
+  def __init__(self, settings):
     self._parse_argv()
+    self.settings = settings
+
     if self.params == {}:
       log("Normal operations")
-      if settings.bridge_ip != "-":
+      if self.settings.bridge_ip != "-":
         self.test_connection()
     elif self.params['action'] == "discover":
       log("Starting discover")
@@ -55,8 +65,8 @@ class Hue:
         notify("Bridge discovery", "Found bridge at: %s" % hue_ip)
         username = register_user(hue_ip)
         log("Updating settings")
-        update_settings("bridge_ip", hue_ip)
-        update_settings("bridge_user", username)
+        self.settings = update_settings(self.settings, "bridge_ip", hue_ip)
+        self.settings = update_settings(self.settings, "bridge_user", username)
         notify("Bridge discovery", "Finished")
         self.test_connection()
       else:
@@ -66,13 +76,13 @@ class Hue:
       log("unimplemented action call: %s" % self.params['action'])
 
     if self.connected:
-      if settings.misc_initialflash:
+      if self.settings.misc_initialflash:
         self.flash_lights()
       self.run()
 
   def flash_lights(self):
     for light in self.used_lights():
-        flash_light(settings.bridge_ip, settings.bridge_user, light)
+        flash_light(self.settings.bridge_ip, self.settings.bridge_user, light)
     
   def _parse_argv( self ):
     try:
@@ -82,7 +92,7 @@ class Hue:
     log( "### params: %s" % self.params )
 
   def test_connection(self):
-    if not test_connection(settings.bridge_ip, settings.bridge_user):
+    if not test_connection(self.settings.bridge_ip, self.settings.bridge_user):
       notify("Failed", "Could not connect to bridge")
       self.connected = False
     else:
@@ -101,34 +111,34 @@ class Hue:
 
   def dim_lights(self):
     for light in self.used_lights():
-        dim_light(settings.bridge_ip, settings.bridge_user, light)
+        dim_light(self.settings.bridge_ip, self.settings.bridge_user, light)
 
   def brighter_lights(self):
     for light in self.used_lights():
-        brighter_light(settings.bridge_ip, settings.bridge_user, light)
+        brighter_light(self.settings.bridge_ip, self.settings.bridge_user, light)
 
   def used_lights(self):
     lights = []
-    if settings.light_1:
+    if self.settings.light_1:
       lights.append(1)
-    if settings.light_2:
+    if self.settings.light_2:
       lights.append(2)
-    if settings.light_3:
+    if self.settings.light_3:
       lights.append(3)
     return lights
 
   def run(self):
     while not xbmc.abortRequested:
-      if settings.mode == 1: # theatre mode
+      if self.settings.mode == 1: # theatre mode
         self.check_state()
         time.sleep(1)
-      if settings.mode == 0: # ambilight mode
+      if self.settings.mode == 0: # ambilight mode
         capture.waitForCaptureStateChangeEvent(1000)
         if capture.getCaptureState() == xbmc.CAPTURE_STATE_DONE:
           screen = Screenshot(capture.getImage(), capture.getWidth(), capture.getHeight())
           h, s, v = screen.get_hsv()
           for light in self.used_lights():
-            set_light2(settings.bridge_ip, settings.bridge_user, light, h, s, v)
+            set_light2(self.settings.bridge_ip, self.settings.bridge_user, light, h, s, v)
 
 class Screenshot:
   pixels = None
@@ -200,4 +210,5 @@ class Screenshot:
     return h, s, v
 
 if ( __name__ == "__main__" ):
-    Hue()
+  settings = settings()
+  Hue(settings)

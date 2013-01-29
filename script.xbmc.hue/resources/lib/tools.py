@@ -59,9 +59,11 @@ def register_user(hue_ip):
 
 	return username
 
-def update_settings(setting, value):
+def update_settings(settings, setting, value):
 	addon = xbmcaddon.Addon()
 	addon.setSetting(setting, value)
+	setattr(settings, setting, value)
+	return settings
 
 def test_connection(bridge_ip, bridge_user):
 	response = urllib2.urlopen('http://%s/api/%s/config' % (bridge_ip, bridge_user))
