@@ -65,8 +65,8 @@ class Hue:
         notify("Bridge discovery", "Found bridge at: %s" % hue_ip)
         username = register_user(hue_ip)
         log("Updating settings")
-        self.settings = update_settings(self.settings, "bridge_ip", hue_ip)
-        self.settings = update_settings(self.settings, "bridge_user", username)
+        self.settings.update(bridge_ip = hue_ip)
+        self.settings.update(bridge_user = username)
         notify("Bridge discovery", "Finished")
         self.test_connection()
       else:
@@ -86,10 +86,9 @@ class Hue:
     
   def _parse_argv( self ):
     try:
-        self.params = dict( arg.split( "=" ) for arg in sys.argv[ 1 ].split( "&" ) )
+        self.params = dict(arg.split("=") for arg in sys.argv[1].split("&"))
     except:
         self.params = {}
-    log( "### params: %s" % self.params )
 
   def test_connection(self):
     if not test_connection(self.settings.bridge_ip, self.settings.bridge_user):
@@ -128,7 +127,13 @@ class Hue:
     return lights
 
   def run(self):
+    last = datetime.datetime.now()
     while not xbmc.abortRequested:
+      if datetime.datetime.now() - last > datetime.timedelta(seconds=1):
+        # check for updates every 1s (fixme: use callback function)
+        last = datetime.datetime.now()
+        self.settings.readxml()
+      
       if self.settings.mode == 1: # theatre mode
         self.check_state()
         time.sleep(1)
