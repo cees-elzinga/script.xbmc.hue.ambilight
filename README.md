@@ -29,7 +29,6 @@ Some more work needs to be done on the "Ambilight mode". The biggest issue is th
 
 Some other, smaller issues:
  - Better support to detect if a movie is playing / paused or stopped (the callback function didn't seem to work for me)
- - Monitor changes in the add-on's settings. Changes are now effective after restarting XBMC
  - Support a variable number of lights
 
 Contributing

@@ -83,8 +83,8 @@ def set_light2(bridge_ip, bridge_user, light, hue, sat, bri):
         "on": True,
         "hue": hue,
         "sat": sat,
-        #"bri": bri,
-        "bri": 254,
+        "bri": bri,
+        #"bri": 254,
         #"transitiontime":0
     })
 
