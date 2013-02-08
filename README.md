@@ -30,6 +30,7 @@ Some more work needs to be done on the "Ambilight mode". The biggest issue is th
 Some other, smaller issues:
  - Better support to detect if a movie is playing / paused or stopped (the callback function didn't seem to work for me)
  - Support a variable number of lights
+ - Ambilight does't work on a Raspberry Pi
 
 Contributing
 ------------
