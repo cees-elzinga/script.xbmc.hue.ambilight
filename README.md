@@ -14,7 +14,7 @@ Turn your Philips Hue lights in a room-sized ambilight. Just install the add-on,
 Installation
 ------------
 
-Make sure the Python PIL library is installed (http://www.pythonware.com/products/pil/).
+The ambilight mode requires the Python PIL library is installed. Follow the instructions at: http://www.pythonware.com/products/pil/. If you have troubles installing Python PIL, or don't care about the ambilight mode, there's also a stripped version of this add-on that works out of the box (https://github.com/cees-elzinga/script.xbmc.hue.stripped).
 
 Copy the `script.xbmc.hue` folder to your XBMC add-ons. For Mac OSX users: `/Users/username/Library/Application Support/XBMC/addons/`.
 
