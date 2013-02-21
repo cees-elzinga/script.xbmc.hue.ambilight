@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.xbmc.hue" name="XBMC Philips Hue" version="0.1" provider-name="hue">
+<addon id="script.xbmc.hue" name="XBMC Philips Hue" version="0.2" provider-name="Cees Elzinga">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
     <import addon="script.module.pil"/>
   </requires>
-  <extension point="xbmc.service" library="default.py" start="login"></extension>
+  <extension point="xbmc.service" library="default.py"></extension>
   <extension point="xbmc.addon.metadata">
     <summary>XBMC controlled Philips Hue lights</summary>
     <description>XBMC output to Philips Hue lights</description>

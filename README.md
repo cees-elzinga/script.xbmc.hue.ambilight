@@ -27,9 +27,10 @@ Future work
 
 Some more work needs to be done on the "Ambilight mode". The biggest issue is that it takes approximately 1 second to adjust the lights. The time is spent by the bridge, and I don't see any quick way to improve it. For now - "Ambilight mode" works but will be out of sync with the video streams for at least 1 second.
 
-Some other, smaller issues:
+The Ambilight mode doesn't work on a Raspberry Pi due to the way it renders video.
+
+Todo:
  - Support a variable number of lights
- - Ambilight does't work on a Raspberry Pi
 
 Contributing
 ------------

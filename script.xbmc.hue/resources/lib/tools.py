@@ -1,7 +1,5 @@
-import urllib
 import urllib2
 import time
-import sys
 import os
 import socket
 import json
@@ -15,7 +13,7 @@ __cwd__        = __addon__.getAddonInfo('path')
 __icon__       = os.path.join(__cwd__,"icon.png")
 __settings__   = os.path.join(__cwd__,"resources","settings.xml")
 
-def notify(title, msg):
+def notify(title, msg=""):
   global __icon__
   xbmc.executebuiltin("XBMC.Notification(%s, %s, 3, %s)" % (title, msg, __icon__))
 
@@ -59,26 +57,39 @@ def register_user(hue_ip):
 
   return username
 
-def test_connection(bridge_ip, bridge_user):
-  response = urllib2.urlopen('http://%s/api/%s/config' % (bridge_ip, bridge_user))
-  response = response.read()
-  if response.find("name"):
-    return True
-  else:
-    return False
+class Light:
+  start_setting = None
 
-def request_url_put(url, data):
-  # Unfortunately, this request will take ~1s on the bridge,
-  #  ruining the ambilight effect
-  opener = urllib2.build_opener(urllib2.HTTPHandler)
-  request = urllib2.Request(url, data=data)
-  request.get_method = lambda: 'PUT'
-  url = opener.open(request)
+  def __init__(self, bridge_ip, bridge_user, light):
+    self.bridge_ip = bridge_ip
+    self.bridge_user = bridge_user
+    self.light = light
+    self.get_current_setting()
 
-def set_light(bridge_ip, bridge_user, light, data):
-  request_url_put("http://%s/api/%s/lights/%s/state" % (bridge_ip, bridge_user, light), data=data)
+  def request_url_put(self, url, data):
+    # Unfortunately, this request will take ~1s on the bridge,
+    #  ruining the ambilight effect
+    opener = urllib2.build_opener(urllib2.HTTPHandler)
+    request = urllib2.Request(url, data=data)
+    request.get_method = lambda: 'PUT'
+    url = opener.open(request)
 
-def set_light2(bridge_ip, bridge_user, light, hue, sat, bri):
+  def get_current_setting(self):
+    r = urllib2.urlopen("http://%s/api/%s/lights/%s" % \
+      (self.bridge_ip, self.bridge_user, self.light))
+    j = json.loads(r.read())
+    self.start_setting = {
+      "on": j['state']['on'],
+      "bri": j['state']['bri'],
+      "hue": j['state']['hue'],
+      "sat": j['state']['sat'],
+    }
+
+  def set_light(self, data):
+    self.request_url_put("http://%s/api/%s/lights/%s/state" % \
+      (self.bridge_ip, self.bridge_user, self.light), data=data)
+
+  def set_light2(self, hue, sat, bri):
     data = json.dumps({
         "on": True,
         "hue": hue,
@@ -88,19 +99,17 @@ def set_light2(bridge_ip, bridge_user, light, hue, sat, bri):
         #"transitiontime":0
     })
 
-    request_url_put("http://%s/api/%s/lights/%s/state" % (bridge_ip, bridge_user, light), data=data)
+    self.request_url_put("http://%s/api/%s/lights/%s/state" % \
+      (self.bridge_ip, self.bridge_user, self.light), data=data)
 
-def flash_light(bridge_ip, bridge_user, light):
-  dimmed = '{"on":true,"bri":10,"transitiontime":4}'
-  set_light(bridge_ip, bridge_user, light, dimmed)
-  on = '{"on":true,"bri":255,"transitiontime":4}'
-  set_light(bridge_ip, bridge_user, light, on)
+  def flash_light(self):
+    self.dim_light()
+    self.brighter_light()
 
-def dim_light(bridge_ip, bridge_user, light):
-  dimmed = '{"on":true,"bri":10,"transitiontime":4}'
-  set_light(bridge_ip, bridge_user, light, dimmed)
+  def dim_light(self):
+    dimmed = '{"on":true,"bri":0,"transitiontime":4}'
+    self.set_light(dimmed)
 
-def brighter_light(bridge_ip, bridge_user, light):
-  on = '{"on":true,"bri":255,"transitiontime":4}'
-  set_light(bridge_ip, bridge_user, light, on)
-  
+  def brighter_light(self):
+    on = '{"on":true,"bri":%d,"transitiontime":4}' % self.start_setting['bri']
+    self.set_light(on)

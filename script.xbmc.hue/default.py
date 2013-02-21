@@ -43,18 +43,33 @@ fmt = capture.getImageFormat()
 
 capture.capture(capture_width, capture_height, xbmc.CAPTURE_FLAG_CONTINUOUS)
 
+class MyPlayer(xbmc.Player):
+  def __init__(self):
+    xbmc.Player.__init__(self)
+
+  def onPlayBackStarted(self):
+    state_changed("started")
+
+  def onPlayBackPaused(self):
+    state_changed("paused")
+
+  def onPlayBackResumed(self):
+    state_changed("resumed")
+
+  def onPlayBackStopped(self):
+    state_changed("stopped")
+
 class Hue:
   params = None
   connected = None
   last_state = None
-  settings = None
+  lights = None
 
   def __init__(self, settings):
     self._parse_argv()
     self.settings = settings
 
     if self.params == {}:
-      log("Normal operations")
       if self.settings.bridge_ip != "-":
         self.test_connection()
     elif self.params['action'] == "discover":
@@ -78,11 +93,10 @@ class Hue:
     if self.connected:
       if self.settings.misc_initialflash:
         self.flash_lights()
-      self.run()
 
   def flash_lights(self):
     for light in self.used_lights():
-        flash_light(self.settings.bridge_ip, self.settings.bridge_user, light)
+        light.flash_light()
     
   def _parse_argv( self ):
     try:
@@ -91,65 +105,47 @@ class Hue:
         self.params = {}
 
   def test_connection(self):
-    if not test_connection(self.settings.bridge_ip, self.settings.bridge_user):
+    response = urllib2.urlopen('http://%s/api/%s/config' % \
+      (self.settings.bridge_ip, self.settings.bridge_user))
+    response = response.read()
+    test_connection = response.find("name")
+    if not test_connection:
       notify("Failed", "Could not connect to bridge")
       self.connected = False
     else:
       notify("XBMC Hue", "Connected")
       self.connected = True
 
-  def check_state(self): 
-    if xbmc.Player().isPlaying():
-      if self.last_state != 'start':
-        self.dim_lights()
-      self.last_state = 'start'
-    else:
-      if self.last_state != 'stop' and self.last_state != None:
-        self.brighter_lights()
-      self.last_state = 'stop'  
-
   def dim_lights(self):
     for light in self.used_lights():
-        dim_light(self.settings.bridge_ip, self.settings.bridge_user, light)
-
+        light.dim_light()
+        
   def brighter_lights(self):
     for light in self.used_lights():
-        brighter_light(self.settings.bridge_ip, self.settings.bridge_user, light)
+        light.brighter_light()
+
+  def active_light(self, light):
+    if self.lights == None:
+      return False
+    else:
+      return len([l for l in self.lights if l.light == light]) == 1
 
   def used_lights(self):
-    lights = []
-    if self.settings.light_1:
-      lights.append(1)
-    if self.settings.light_2:
-      lights.append(2)
-    if self.settings.light_3:
-      lights.append(3)
-    return lights
+    if self.settings.light_1 != self.active_light(1) or \
+       self.settings.light_2 != self.active_light(2) or \
+       self.settings.light_3 != self.active_light(3):
+      lights = []
+      if self.settings.light_1:
+        lights.append(Light(self.settings.bridge_ip, self.settings.bridge_user, 1))
+      if self.settings.light_2:
+        lights.append(Light(self.settings.bridge_ip, self.settings.bridge_user, 2))
+      if self.settings.light_3:
+        lights.append(Light(self.settings.bridge_ip, self.settings.bridge_user, 3))
+      self.lights = lights
 
-  def run(self):
-    last = datetime.datetime.now()
-    while not xbmc.abortRequested:
-      if datetime.datetime.now() - last > datetime.timedelta(seconds=1):
-        # check for updates every 1s (fixme: use callback function)
-        last = datetime.datetime.now()
-        self.settings.readxml()
-      
-      if self.settings.mode == 1: # theatre mode
-        self.check_state()
-        time.sleep(1)
-      if self.settings.mode == 0: # ambilight mode
-        capture.waitForCaptureStateChangeEvent(1000)
-        if capture.getCaptureState() == xbmc.CAPTURE_STATE_DONE:
-          screen = Screenshot(capture.getImage(), capture.getWidth(), capture.getHeight())
-          h, s, v = screen.get_hsv()
-          for light in self.used_lights():
-            set_light2(self.settings.bridge_ip, self.settings.bridge_user, light, h, s, v)
+    return self.lights
 
 class Screenshot:
-  pixels = None
-  capture_width = None
-  capture_height = None
-
   def __init__(self, pixels, capture_width, capture_height):
     self.pixels = pixels
     self.capture_width = capture_width
@@ -214,6 +210,35 @@ class Screenshot:
       v = 75
     return h, s, v
 
+def run():
+  last = datetime.datetime.now()
+  while not xbmc.abortRequested:
+    if datetime.datetime.now() - last > datetime.timedelta(seconds=1):
+      # check for updates every 1s (fixme: use callback function)
+      last = datetime.datetime.now()
+      hue.settings.readxml()
+    
+    if hue.settings.mode == 1: # theatre mode
+      player = MyPlayer()
+      xbmc.sleep(500)
+    if hue.settings.mode == 0: # ambilight mode
+      capture.waitForCaptureStateChangeEvent(1000)
+      if capture.getCaptureState() == xbmc.CAPTURE_STATE_DONE:
+        screen = Screenshot(capture.getImage(), capture.getWidth(), capture.getHeight())
+        h, s, v = screen.get_hsv()
+        for light in hue.used_lights():
+          light.set_light2(h, s, v)
+
+def state_changed(state):
+  if state == "started" or state == "resumed":
+    hue.dim_lights()
+  elif state == "stopped" or state == "paused":
+    hue.brighter_lights()
+
 if ( __name__ == "__main__" ):
   settings = settings()
-  Hue(settings)
+  hue = Hue(settings)
+  if not hue.connected:
+    time.sleep(1)
+  else:
+    run()
