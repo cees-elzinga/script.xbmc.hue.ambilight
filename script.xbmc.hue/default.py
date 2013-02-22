@@ -238,7 +238,6 @@ def state_changed(state):
 if ( __name__ == "__main__" ):
   settings = settings()
   hue = Hue(settings)
-  if not hue.connected:
+  while not hue.connected:
     time.sleep(1)
-  else:
-    run()
+  run()
