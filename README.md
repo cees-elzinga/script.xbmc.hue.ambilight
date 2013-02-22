@@ -16,15 +16,16 @@ Installation
 
 The add-on requires two external Python libraries for the ambilight mode. If you don't care about the ambilight mode, there's also a stripped version of this add-on that works out of the box (https://github.com/cees-elzinga/script.xbmc.hue.stripped).
 
- 1. Python PIL
+ - Python PIL
 
 Follow the instructions at: http://www.pythonware.com/products/pil/.
 
- 2. Python requests
+ - Python requests
 
 Download the XBMC add-on from https://github.com/beenje/script.module.requests, and put the `scripts.module.requests` in your add-ons. For Mac OSX users: `/Users/username/Library/Application Support/XBMC/addons/`.
 
- 3. Install the add-on
+ - Install the add-on
+
 Copy the `script.xbmc.hue` folder to your XBMC add-ons.
 
 Restart XBMC and configure the add-on:
