@@ -6,7 +6,6 @@ import random
 import hashlib
 import xbmc
 import xbmcaddon
-import requests
 
 __addon__      = xbmcaddon.Addon()
 __cwd__        = __addon__.getAddonInfo('path')
@@ -16,6 +15,11 @@ __settings__   = os.path.join(__cwd__,"resources","settings.xml")
 def notify(title, msg=""):
   global __icon__
   xbmc.executebuiltin("XBMC.Notification(%s, %s, 3, %s)" % (title, msg, __icon__))
+
+try:
+  import requests
+except ImportError:
+  notify("XBMC Hue", "ERROR: Could not import Python requests")
 
 def start_autodisover():
   port = 1900

@@ -6,7 +6,6 @@ import sys
 import colorsys
 import os
 import datetime
-import requests
 
 __addon__      = xbmcaddon.Addon()
 __cwd__        = __addon__.getAddonInfo('path')
@@ -31,6 +30,12 @@ except ImportError:
   except ImportError:
     log("ERROR: Could not locate required library PIL")
     notify("XBMC Hue", "ERROR: Could not import Python PIL")
+
+try:
+  import requests
+except ImportError:
+  log("ERROR: Could not locate required library requests")
+  notify("XBMC Hue", "ERROR: Could not import Python requests")
 
 log("Service started")
 # Assume a ratio of 4/3
