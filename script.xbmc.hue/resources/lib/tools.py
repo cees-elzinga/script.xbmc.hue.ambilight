@@ -107,6 +107,7 @@ class Light:
     self.brighter_light()
 
   def dim_light(self):
+    self.get_current_setting()
     dimmed = '{"on":true,"bri":0,"transitiontime":4}'
     self.set_light(dimmed)
 
