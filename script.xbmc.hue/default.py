@@ -6,6 +6,7 @@ import sys
 import colorsys
 import os
 import datetime
+import requests
 
 __addon__      = xbmcaddon.Addon()
 __cwd__        = __addon__.getAddonInfo('path')
@@ -65,9 +66,9 @@ class Hue:
   last_state = None
   lights = None
 
-  def __init__(self, settings):
-    self._parse_argv()
+  def __init__(self, settings, args):
     self.settings = settings
+    self._parse_argv(args)
 
     if self.params == {}:
       if self.settings.bridge_ip != "-":
@@ -98,17 +99,16 @@ class Hue:
     for light in self.used_lights():
         light.flash_light()
     
-  def _parse_argv( self ):
+  def _parse_argv(self, args):
     try:
-        self.params = dict(arg.split("=") for arg in sys.argv[1].split("&"))
+        self.params = dict(arg.split("=") for arg in args.split("&"))
     except:
         self.params = {}
 
   def test_connection(self):
-    response = urllib2.urlopen('http://%s/api/%s/config' % \
+    r = requests.get('http://%s/api/%s/config' % \
       (self.settings.bridge_ip, self.settings.bridge_user))
-    response = response.read()
-    test_connection = response.find("name")
+    test_connection = r.text.find("name")
     if not test_connection:
       notify("Failed", "Could not connect to bridge")
       self.connected = False
@@ -237,7 +237,10 @@ def state_changed(state):
 
 if ( __name__ == "__main__" ):
   settings = settings()
-  hue = Hue(settings)
+  args = None
+  if len(sys.argv) == 2:
+    args = sys.argv[1]
+  hue = Hue(settings, args)
   while not hue.connected:
     time.sleep(1)
   run()

@@ -14,9 +14,18 @@ Turn your Philips Hue lights in a room-sized ambilight. Just install the add-on,
 Installation
 ------------
 
-The ambilight mode requires the Python PIL library is installed. Follow the instructions at: http://www.pythonware.com/products/pil/. If you have troubles installing Python PIL, or don't care about the ambilight mode, there's also a stripped version of this add-on that works out of the box (https://github.com/cees-elzinga/script.xbmc.hue.stripped).
+The add-on requires two external Python libraries for the ambilight mode. If you don't care about the ambilight mode, there's also a stripped version of this add-on that works out of the box (https://github.com/cees-elzinga/script.xbmc.hue.stripped).
 
-Copy the `script.xbmc.hue` folder to your XBMC add-ons. For Mac OSX users: `/Users/username/Library/Application Support/XBMC/addons/`.
+ 1. Python PIL
+
+Follow the instructions at: http://www.pythonware.com/products/pil/.
+
+ 2. Python requests
+
+Download the XBMC add-on from https://github.com/beenje/script.module.requests, and put the `scripts.module.requests` in your add-ons. For Mac OSX users: `/Users/username/Library/Application Support/XBMC/addons/`.
+
+ 3. Install the add-on
+Copy the `script.xbmc.hue` folder to your XBMC add-ons.
 
 Restart XBMC and configure the add-on:
 
@@ -25,11 +34,7 @@ System -> Settings -> Add-ons -> Enabled add-ons -> Services -> XBMC Philips Hue
 Future work
 -----------
 
-Some more work needs to be done on the "Ambilight mode". The biggest issue is that it takes approximately 1 second to adjust the lights. The time is spent by the bridge, and I don't see any quick way to improve it. For now - "Ambilight mode" works but will be out of sync with the video streams for at least 1 second.
-
-The Ambilight mode doesn't work on a Raspberry Pi due to the way it renders video.
-
-Todo:
+ - Ambilight mode doesn't work on a Raspberry Pi due to the way it renders video.
  - Support a variable number of lights
 
 Contributing

@@ -1,4 +1,3 @@
-import urllib2
 import time
 import os
 import socket
@@ -7,6 +6,7 @@ import random
 import hashlib
 import xbmc
 import xbmcaddon
+import requests
 
 __addon__      = xbmcaddon.Addon()
 __cwd__        = __addon__.getAddonInfo('path')
@@ -46,13 +46,12 @@ def register_user(hue_ip):
   device = "xbmc-player"
   data = '{"username": "%s", "devicetype": "%s"}' % (username, device)
 
-  # use urllib2 as it's included in Python
-  response = urllib2.urlopen('http://%s/api' % hue_ip, data)
-  response = response.read()
+  r = requests.post('http://%s/api' % hue_ip, data=data)
+  response = r.text
   while "link button not pressed" in response:
     notify("Bridge discovery", "press link button on bridge")
-    response = urllib2.urlopen('http://%s/api' % hue_ip, data)
-    response = response.read()  
+    r = requests.post('http://%s/api' % hue_ip, data=data)
+    response = r.text 
     time.sleep(3)
 
   return username
@@ -67,17 +66,12 @@ class Light:
     self.get_current_setting()
 
   def request_url_put(self, url, data):
-    # Unfortunately, this request will take ~1s on the bridge,
-    #  ruining the ambilight effect
-    opener = urllib2.build_opener(urllib2.HTTPHandler)
-    request = urllib2.Request(url, data=data)
-    request.get_method = lambda: 'PUT'
-    url = opener.open(request)
+    r = requests.put(url, data=data)
 
   def get_current_setting(self):
-    r = urllib2.urlopen("http://%s/api/%s/lights/%s" % \
+    r = requests.get("http://%s/api/%s/lights/%s" % \
       (self.bridge_ip, self.bridge_user, self.light))
-    j = json.loads(r.read())
+    j = r.json()
     self.start_setting = {
       "on": j['state']['on'],
       "bri": j['state']['bri'],
