@@ -12,9 +12,13 @@ __cwd__        = __addon__.getAddonInfo('path')
 __icon__       = os.path.join(__cwd__,"icon.png")
 __settings__   = os.path.join(__cwd__,"resources","settings.xml")
 
+def log(msg):
+  xbmc.log("%s: %s" % ("Hue", msg))
+   
 def notify(title, msg=""):
   global __icon__
   xbmc.executebuiltin("XBMC.Notification(%s, %s, 3, %s)" % (title, msg, __icon__))
+  #log(str(title) + " " + str(msg))
 
 try:
   import requests
@@ -62,6 +66,7 @@ def register_user(hue_ip):
 
 class Light:
   start_setting = None
+  group = False
 
   def __init__(self, bridge_ip, bridge_user, light):
     self.bridge_ip = bridge_ip
@@ -105,10 +110,45 @@ class Light:
     self.brighter_light()
 
   def dim_light(self):
-    self.get_current_setting()
+    #self.get_current_setting()
     dimmed = '{"on":true,"bri":0,"transitiontime":4}'
     self.set_light(dimmed)
 
   def brighter_light(self):
     on = '{"on":true,"bri":%d,"transitiontime":4}' % self.start_setting['bri']
     self.set_light(on)
+
+class Group(Light):
+  # Only use group is we want to control all lights
+  # Creating and modifying custom groups on the fly does not work as expected
+  #  and requires reboots of the bridge
+  group = True
+
+  def __init__(self, bridge_ip, bridge_user):
+    Light.__init__(self, bridge_ip, bridge_user, 2)
+
+  def set_light(self, data):
+    Light.request_url_put(self, "http://%s/api/%s/groups/0/action" % \
+      (self.bridge_ip, self.bridge_user), data=data)
+
+  def set_light2(self, hue, sat, bri):
+    data = json.dumps({
+        "on": True,
+        "hue": hue,
+        "sat": sat,
+        "bri": bri,
+        #"bri": 254,
+        #"transitiontime":0
+    })
+
+    self.request_url_put("http://%s/api/%s/groups/0/action" % \
+      (self.bridge_ip, self.bridge_user), data=data)
+
+  def dim_light(self):
+    # Setting the brightness of a group to 0 does not turn the lights off
+    # Turning the lights of with a transitiontime does not work as expected
+    # workaround: dim the lights first, then turn them off
+    dimmed = '{"on":true,"bri":0,"transitiontime":4}'
+    self.set_light(dimmed)
+    off = '{"on":false}'
+    self.set_light(off)

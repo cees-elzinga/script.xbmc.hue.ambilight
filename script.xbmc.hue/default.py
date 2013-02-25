@@ -1,3 +1,4 @@
+
 import xbmc
 import xbmcgui
 import xbmcaddon
@@ -69,11 +70,12 @@ class Hue:
   params = None
   connected = None
   last_state = None
-  lights = None
+  light = None
 
   def __init__(self, settings, args):
     self.settings = settings
     self._parse_argv(args)
+    self.update_settings()
 
     if self.params == {}:
       if self.settings.bridge_ip != "-":
@@ -101,8 +103,7 @@ class Hue:
         self.flash_lights()
 
   def flash_lights(self):
-    for light in self.used_lights():
-        light.flash_light()
+    self.light.flash_light()
     
   def _parse_argv(self, args):
     try:
@@ -122,33 +123,20 @@ class Hue:
       self.connected = True
 
   def dim_lights(self):
-    for light in self.used_lights():
-        light.dim_light()
+    self.light.dim_light()
         
   def brighter_lights(self):
-    for light in self.used_lights():
-        light.brighter_light()
+    self.light.brighter_light()
 
-  def active_light(self, light):
-    if self.lights == None:
-      return False
-    else:
-      return len([l for l in self.lights if l.light == light]) == 1
-
-  def used_lights(self):
-    if self.settings.light_1 != self.active_light(1) or \
-       self.settings.light_2 != self.active_light(2) or \
-       self.settings.light_3 != self.active_light(3):
-      lights = []
-      if self.settings.light_1:
-        lights.append(Light(self.settings.bridge_ip, self.settings.bridge_user, 1))
-      if self.settings.light_2:
-        lights.append(Light(self.settings.bridge_ip, self.settings.bridge_user, 2))
-      if self.settings.light_3:
-        lights.append(Light(self.settings.bridge_ip, self.settings.bridge_user, 3))
-      self.lights = lights
-
-    return self.lights
+  def update_settings(self):
+    if self.settings.light == 0 and \
+        (self.light is None or self.light.group is not True):
+      self.light = Group(self.settings.bridge_ip, self.settings.bridge_user)
+    elif self.settings.light > 0 and \
+          (self.light is None or \
+          self.light.group == True or \
+          self.light.light != self.settings.light):
+      self.light = Light(self.settings.bridge_ip, self.settings.bridge_user, self.settings.light)
 
 class Screenshot:
   def __init__(self, pixels, capture_width, capture_height):
@@ -222,6 +210,7 @@ def run():
       # check for updates every 1s (fixme: use callback function)
       last = datetime.datetime.now()
       hue.settings.readxml()
+      hue.update_settings()
     
     if hue.settings.mode == 1: # theatre mode
       player = MyPlayer()
@@ -231,8 +220,7 @@ def run():
       if capture.getCaptureState() == xbmc.CAPTURE_STATE_DONE:
         screen = Screenshot(capture.getImage(), capture.getWidth(), capture.getHeight())
         h, s, v = screen.get_hsv()
-        for light in hue.used_lights():
-          light.set_light2(h, s, v)
+        hue.light.set_light2(h, s, v)
 
 def state_changed(state):
   if state == "started" or state == "resumed":
