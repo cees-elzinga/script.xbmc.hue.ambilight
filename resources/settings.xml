@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+  <category label="100">
+  	<setting id="discover_bridge" type="action" label="101" action="RunScript(script.xbmc.hue,action=discover)" />
+  	<setting id="bridge_ip" type="text" label="102" enable="!eq(-1,true)" default="-" />
+  	<setting id="bridge_user" type="text" label="103" enable="!eq(-1,true)" default="-" />
+  	<setting id="sep1" type="sep" />
+    <setting id="light" type="enum" enable="true" label="109" default="0" lvalues="110|111|112|113" />
+    <setting id="sep2" type="sep" />
+  	<setting id="mode" type="enum" enable="true" label="201" default="0" lvalues="202|203" />
+  	<setting id="sep3" type="sep" />
+    <setting id="notice" type="action" label="250" />
+    <setting id="sep4" type="sep" />
+    <setting id="misc_initialflash" type="bool" label="310" default="true" />
+  </category>
+</settings>
