@@ -66,6 +66,9 @@ class MyPlayer(xbmc.Player):
   def onPlayBackStopped(self):
     state_changed("stopped")
 
+  def onPlayBackEnded(self):
+    state_changed("stopped")
+
 class Hue:
   params = None
   connected = None
