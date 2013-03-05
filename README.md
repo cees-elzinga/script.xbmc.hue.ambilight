@@ -37,9 +37,10 @@ System -> Settings -> Add-ons -> Enabled add-ons -> Services -> XBMC Philips Hue
 
 Donations
 ---------
-Donations are always welcome :)
+If you like the add-on, donations are always welcome :)
 
-![Pledgie](http://www.pledgie.com/campaigns/19430.png)
+[![Pledgie](http://www.pledgie.com/campaigns/19430.png?skin_name=chrome)](http://www.pledgie.com/campaigns/19430)
+
 
 Release history
 ---------------
