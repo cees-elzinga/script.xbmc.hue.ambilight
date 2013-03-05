@@ -39,7 +39,7 @@ Donations
 ---------
 Donations are always welcome :)
 
-[![Pledgie](http://www.pledgie.com/campaigns/19430.png)][pledgie]
+![Pledgie](http://www.pledgie.com/campaigns/19430.png)
 
 Release history
 ---------------
@@ -50,6 +50,6 @@ Release history
 Contributing
 ------------
 
-Want to contribute? Great! I don't plan on actvily maintaining this code, but will accept push requests. You can contact me on my Github profile page.
+Want to contribute? Great! I don't plan on actvily extending this code, but will accept push requests and help with bug reports. You can contact me on my Github profile page.
 
 Feel free to fork away and have fun!
