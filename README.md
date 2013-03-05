@@ -35,6 +35,17 @@ Download the XBMC add-on from https://github.com/beenje/script.module.requests, 
 Copy the `script.xbmc.hue` folder to your XBMC add-ons. Restart XBMC and configure the add-on:
 System -> Settings -> Add-ons -> Enabled add-ons -> Services -> XBMC Philips Hue
 
+Donations
+---------
+Donations are always welcome :)
+
+[![Pledgie](http://www.pledgie.com/campaigns/19430.png)][pledgie]
+
+Release history
+---------------
+  * 2013-03-05 v 0.3.2 Small improvements
+  * 2013-02-25 v 0.3.1 Improved handling for grouped lights
+  * 2013-01-27 v 0.1.0 Initial release
 
 Contributing
 ------------
