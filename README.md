@@ -1,6 +1,8 @@
 script.xbmc.hue.ambilight
 =========================
 
+![ScreenShot](http://meethue.files.wordpress.com/2013/01/plugin2.png?w=400)
+
 This is an XBMC add-on that controls Philips Hue lights. It supports two modes of operations: "Theatre mode" and "Ambilight mode:
 
 ### Theatre mode
