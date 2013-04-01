@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
   <category label="100">
-    <setting id="discover_bridge" type="action" label="101" action="RunScript(script.xbmc.hue,action=discover)" />
+    <setting id="discover_bridge" type="action" label="101" action="RunScript(script.xbmc.hue.ambilight,action=discover)" />
     <setting id="bridge_ip" type="text" label="102" enable="!eq(-1,true)" default="-" />
     <setting id="bridge_user" type="text" label="103" enable="!eq(-1,true)" default="-" />
     <setting id="sep1" type="sep" />

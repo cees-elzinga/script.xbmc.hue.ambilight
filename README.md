@@ -1,5 +1,5 @@
-script.xbmc.hue
-===============
+script.xbmc.hue.ambilight
+=========================
 
 This is an XBMC add-on that controls Philips Hue lights. It supports two modes of operations: "Theatre mode" and "Ambilight mode:
 
@@ -15,12 +15,12 @@ Future work
 -----------
 
  - Ambilight mode doesn't work on a Raspberry Pi due to the way it renders video.
- - Support a variable number of lights
+ - Support a variable number of lights and groups
 
 Installation
 ------------
 
-The add-on requires two external Python libraries for the ambilight mode. If you don't care about the ambilight mode, there's also a stripped version of this add-on that works out of the box (https://github.com/cees-elzinga/script.xbmc.hue.stripped).
+The add-on requires two external Python libraries for the ambilight mode. If you don't care about the ambilight mode, the default version of this add-on works out of the box (https://github.com/cees-elzinga/script.xbmc.hue).
 
  - Python PIL
 
@@ -45,6 +45,7 @@ If you like the add-on, donations are always welcome :)
 
 Release history
 ---------------
+  * 2013-04-01 v 0.3.3 Rename to script.xbmc.hue.ambilight
   * 2013-03-05 v 0.3.2 Small improvements
   * 2013-02-25 v 0.3.1 Improved handling for grouped lights
   * 2013-01-27 v 0.1.0 Initial release

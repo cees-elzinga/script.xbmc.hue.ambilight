@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.xbmc.hue" name="XBMC Philips Hue" version="0.3.2" provider-name="Cees Elzinga">
+<addon id="script.xbmc.hue.ambilight" name="XBMC Philips Hue" version="0.3.3" provider-name="Cees Elzinga">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
     <import addon="script.module.pil"/>
@@ -8,7 +8,7 @@
   <extension point="xbmc.service" library="default.py"></extension>
   <extension point="xbmc.addon.metadata">
     <summary>XBMC controlled Philips Hue lights</summary>
-    <description>XBMC output to Philips Hue lights</description>
+    <description>Let XBMC control your Philips Hue lights. Either turns the lights into a room-sized ambilight, or automatically dims and un-dims them when playback starts.</description>
     <platform>all</platform>
   </extension>
 </addon>
