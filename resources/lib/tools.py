@@ -119,7 +119,7 @@ class Light:
     self.set_light(on)
 
 class Group(Light):
-  # Only use group is we want to control all lights
+  # Only use a group if we want to control all lights
   # Creating and modifying custom groups on the fly does not work as expected
   #  and requires reboots of the bridge
   group = True
@@ -146,7 +146,7 @@ class Group(Light):
 
   def dim_light(self):
     # Setting the brightness of a group to 0 does not turn the lights off
-    # Turning the lights of with a transitiontime does not work as expected
+    # Turning the lights off with a transitiontime does not work as expected
     # workaround: dim the lights first, then turn them off
     dimmed = '{"on":true,"bri":0,"transitiontime":4}'
     self.set_light(dimmed)

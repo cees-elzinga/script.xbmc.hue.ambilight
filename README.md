@@ -32,8 +32,10 @@ Download the XBMC add-on from https://github.com/beenje/script.module.requests, 
 
  - Install the add-on
 
-Copy the `script.xbmc.hue` folder to your XBMC add-ons. Restart XBMC and configure the add-on:
+Download the add-on as a ZIP file. Open XBMC go to System -> Settings -> Add-ons -> Install from zip file. Restart XBMC and configure the add-on:
 System -> Settings -> Add-ons -> Enabled add-ons -> Services -> XBMC Philips Hue
+
+Note for Raspberry Pi users: To save the add-on configuration, exit XBMC first before shutting down the Pi.
 
 Donations
 ---------
