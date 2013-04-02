@@ -74,8 +74,11 @@ class Light:
     self.light = light
     self.get_current_setting()
 
+    self.s = requests.Session()
+
   def request_url_put(self, url, data):
-    r = requests.put(url, data=data)
+    #r = requests.put(url, data=data)
+    self.s.put(url, data=data)
 
   def get_current_setting(self):
     r = requests.get("http://%s/api/%s/lights/%s" % \
@@ -119,7 +122,7 @@ class Light:
     self.set_light(on)
 
 class Group(Light):
-  # Only use a group if we want to control all lights
+  # Only use group is we want to control all lights
   # Creating and modifying custom groups on the fly does not work as expected
   #  and requires reboots of the bridge
   group = True
@@ -146,7 +149,7 @@ class Group(Light):
 
   def dim_light(self):
     # Setting the brightness of a group to 0 does not turn the lights off
-    # Turning the lights off with a transitiontime does not work as expected
+    # Turning the lights of with a transitiontime does not work as expected
     # workaround: dim the lights first, then turn them off
     dimmed = '{"on":true,"bri":0,"transitiontime":4}'
     self.set_light(dimmed)

@@ -173,11 +173,11 @@ class Screenshot:
     g_b, g_g, g_r, g_a = 0, 0, 0, 0
     for y in range(height):
       row = width * y * 4
-      for x in range(width):
-        b = pixels[row + x * 4]
-        g = pixels[row + x * 4 + 1]
-        r = pixels[row + x * 4 + 2]
-        a = pixels[row + x * 4 + 3]
+      for x in range(width/5 - 5):
+        b = pixels[row + x * 4 * 5 + y%5]
+        g = pixels[row + x * 4 * 5 + y%5 + 1]
+        r = pixels[row + x * 4 * 5 + y%5 + 2]
+        a = pixels[row + x * 4 * 5 + y%5 + 3]
         g_b += b
         g_g += g
         g_r += r

@@ -47,6 +47,7 @@ If you like the add-on, donations are always welcome :)
 
 Release history
 ---------------
+  * 2013-04-02 v 0.3.4 Ambilight is more responsive
   * 2013-04-01 v 0.3.3 Rename to script.xbmc.hue.ambilight
   * 2013-03-05 v 0.3.2 Small improvements
   * 2013-02-25 v 0.3.1 Improved handling for grouped lights
