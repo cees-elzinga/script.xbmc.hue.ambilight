@@ -37,7 +37,7 @@ Download the XBMC add-on from https://github.com/beenje/script.module.requests, 
 Download the add-on as a ZIP file. Open XBMC and go to System -> Settings -> Add-ons -> Install from zip file. Restart XBMC and configure the add-on:
 System -> Settings -> Add-ons -> Enabled add-ons -> Services -> XBMC Philips Hue
 
-Note for Raspberry Pi users: To save the add-on configuration, exit XBMC first before shutting down the Pi.
+Note for Raspberry Pi users: save the add-on configuration by exiting XBMC before shutting down the Pi completely.
 
 Donations
 ---------
@@ -47,6 +47,7 @@ If you like the add-on, donations are always welcome :)
 
 Release history
 ---------------
+  * 2013-04-22 v 0.3.5 Ignore the light if it's turned off. Only act on video playback
   * 2013-04-02 v 0.3.4 Ambilight is more responsive
   * 2013-04-01 v 0.3.3 Rename to script.xbmc.hue.ambilight
   * 2013-03-05 v 0.3.2 Small improvements

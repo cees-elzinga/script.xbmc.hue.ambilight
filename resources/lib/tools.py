@@ -78,7 +78,8 @@ class Light:
 
   def request_url_put(self, url, data):
     #r = requests.put(url, data=data)
-    self.s.put(url, data=data)
+    if self.start_setting['on']:
+      self.s.put(url, data=data)
 
   def get_current_setting(self):
     r = requests.get("http://%s/api/%s/lights/%s" % \
