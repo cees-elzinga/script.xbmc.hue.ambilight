@@ -13,12 +13,6 @@ Dims the the Philips Hue lights as soon as a movie starts playing, and turns the
 
 Turn your Philips Hue lights in a room-sized ambilight. Just install the add-on, and use the built-in "bridge discovery" to discover your bridge and register the XBMC player.
 
-Future work
------------
-
- - Ambilight mode doesn't work on a Raspberry Pi due to the way it renders video.
- - Support a variable number of lights and groups
-
 Installation
 ------------
 
@@ -37,7 +31,10 @@ Download the XBMC add-on from https://github.com/beenje/script.module.requests, 
 Download the add-on as a ZIP file. Open XBMC and go to System -> Settings -> Add-ons -> Install from zip file. Restart XBMC and configure the add-on:
 System -> Settings -> Add-ons -> Enabled add-ons -> Services -> XBMC Philips Hue
 
-Note for Raspberry Pi users: save the add-on configuration by exiting XBMC before shutting down the Pi completely.
+Note for Raspberry Pi users:
+
+ - Save the add-on configuration by exiting XBMC before shutting down the Pi completely
+ - Ambilight mode doesn't work on a Raspberry Pi due to the way it renders video
 
 Donations
 ---------
