@@ -110,12 +110,12 @@ class Light:
       (self.bridge_ip, self.bridge_user, self.light), data=data)
 
   def flash_light(self):
-    self.dim_light()
+    self.dim_light(10)
     self.brighter_light()
 
-  def dim_light(self):
+  def dim_light(self, bri):
     #self.get_current_setting()
-    dimmed = '{"on":true,"bri":0,"transitiontime":4}'
+    dimmed = '{"on":true,"bri":%s,"transitiontime":4}' % bri
     self.set_light(dimmed)
 
   def brighter_light(self):
@@ -148,11 +148,12 @@ class Group(Light):
     self.request_url_put("http://%s/api/%s/groups/0/action" % \
       (self.bridge_ip, self.bridge_user), data=data)
 
-  def dim_light(self):
+  def dim_light(self, bri):
     # Setting the brightness of a group to 0 does not turn the lights off
     # Turning the lights off with a transitiontime does not work as expected
     # workaround: dim the lights first, then turn them off
-    dimmed = '{"on":true,"bri":0,"transitiontime":4}'
+    dimmed = '{"on":true,"bri":%s,"transitiontime":4}' % bri
     self.set_light(dimmed)
-    off = '{"on":false}'
-    self.set_light(off)
+    if bri == 0:
+        off = '{"on":false}'
+        self.set_light(off)

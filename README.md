@@ -44,6 +44,7 @@ If you like the add-on, donations are always welcome :)
 
 Release history
 ---------------
+  * 2013-04-25 v 0.3.6 Custom dimmed brightness in theatre mode
   * 2013-04-22 v 0.3.5 Ignore the light if it's turned off. Only act on video playback
   * 2013-04-02 v 0.3.4 Ambilight is more responsive
   * 2013-04-01 v 0.3.3 Rename to script.xbmc.hue.ambilight

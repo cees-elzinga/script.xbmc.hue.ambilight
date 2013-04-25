@@ -10,6 +10,7 @@
     <setting id="mode" type="enum" enable="true" label="201" default="0" lvalues="202|203" />
     <setting id="notice" type="action" label="250" />
     <setting id="sep3" type="sep" />
+    <setting label="120" type="slider" id="dim_brightness" default="0" range="0,5,100" option="int" />
     <setting id="sep4" type="sep" />
     <setting id="misc_initialflash" type="bool" label="310" default="true" />
   </category>

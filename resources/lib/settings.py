@@ -14,6 +14,7 @@ class settings():
     self.light                 = int(__addon__.getSetting("light"))
     self.mode                  = int(__addon__.getSetting("mode"))
     self.misc_initialflash     = __addon__.getSetting("misc_initialflash") == "true"
+    self.dim_brightness        = int(int(__addon__.getSetting("dim_brightness").split(".")[0])*254/100)
 
   def update(self, **kwargs):
     self.__dict__.update(**kwargs)

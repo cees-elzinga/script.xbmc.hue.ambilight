@@ -140,7 +140,7 @@ class Hue:
       self.connected = True
 
   def dim_lights(self):
-    self.light.dim_light()
+    self.light.dim_light(self.settings.dim_brightness)
         
   def brighter_lights(self):
     self.light.brighter_light()
@@ -242,6 +242,8 @@ def run():
         hue.light.set_light2(h, s, v)
 
 def state_changed(state):
+  if state == "started":
+    hue.light.get_current_setting()
   if state == "started" or state == "resumed":
     hue.dim_lights()
   elif state == "stopped" or state == "paused":

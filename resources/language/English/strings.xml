@@ -9,6 +9,7 @@
   <string id="111">Light 1</string>
   <string id="112">Light 2</string>
   <string id="113">Light 3</string>
+  <string id="120">Dimmed brightness in theatre mode</string>
   <string id="201">Mode</string>
   <string id="202">Ambilight</string>
   <string id="203">Theatre</string>
