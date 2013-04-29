@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <strings>
   <string id="100">General</string>
-  <string id="101">Start bridge discovery</string>
+  <string id="101">Start auto discovery of bridge IP and User</string>
   <string id="102">Bridge IP</string>
   <string id="103">Bridge User</string>
   <string id="109">Select light</string>

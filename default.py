@@ -76,7 +76,7 @@ class MyPlayer(xbmc.Player):
       self.playingvideo = False
       state_changed("stopped")
 
-  def onPlayBackdEnded(self):
+  def onPlayBackEnded(self):
     if self.playingvideo:
       self.playingvideo = False
       state_changed("stopped")
