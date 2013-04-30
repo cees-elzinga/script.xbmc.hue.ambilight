@@ -16,20 +16,16 @@ Turn your Philips Hue lights in a room-sized ambilight. Just install the add-on,
 Installation
 ------------
 
-The add-on requires two external Python libraries for the ambilight mode. If you don't care about the ambilight mode, the default version of this add-on works out of the box (https://github.com/cees-elzinga/script.xbmc.hue).
+The add-on depends on the XBMC add-on "requests" for the ambilight mode. If you don't care about the ambilight mode, the default version of this add-on works out of the box (https://github.com/cees-elzinga/script.xbmc.hue).
 
- - Python PIL
+ - XBMC add-on script.module.requests
 
-Follow the instructions at: http://www.pythonware.com/products/pil/.
+Download the add-on as a ZIP file from https://github.com/beenje/script.module.requests (Right click on the "ZIP" icon and select "Download Linked File"). Open XBMC and go to System -> Settings -> Add-ons -> Install from zip file, and select the zip file.
 
- - Python requests
+ - XBMC add-on script.xbmc.hue.ambilight
 
-Download the XBMC add-on from https://github.com/beenje/script.module.requests, and put the `scripts.module.requests` in your add-ons folder. For Mac OSX users: `/Users/username/Library/Application Support/XBMC/addons/`.
-
- - Install the add-on
-
-Download the add-on as a ZIP file. Open XBMC and go to System -> Settings -> Add-ons -> Install from zip file. Restart XBMC and configure the add-on:
-System -> Settings -> Add-ons -> Enabled add-ons -> Services -> XBMC Philips Hue
+Download the add-on as a ZIP file from the top of this page (Right click on the "ZIP" icon and select "Download Linked File"). Open XBMC and go to System -> Settings -> Add-ons -> Install from zip file. Restart XBMC and configure the add-on:
+System -> Settings -> Add-ons -> Enabled add-ons -> Services -> XBMC Philips Hue and run "Start auto discovery of bridge IP and User".
 
 Note for Raspberry Pi users:
 
@@ -44,6 +40,7 @@ If you like the add-on, donations are always welcome :)
 
 Release history
 ---------------
+  * 2013-04-30 v 0.3.8 Documentation bump
   * 2013-04-25 v 0.3.6 Custom dimmed brightness in theatre mode
   * 2013-04-22 v 0.3.5 Ignore the light if it's turned off. Only act on video playback
   * 2013-04-02 v 0.3.4 Ambilight is more responsive

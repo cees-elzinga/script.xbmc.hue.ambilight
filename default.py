@@ -24,15 +24,6 @@ def log(msg):
   xbmc.log("%s: %s" % (SCRIPTNAME, msg))
 
 try:
-  from pil import Image
-except ImportError:
-  try:
-    from PIL import Image
-  except ImportError:
-    log("ERROR: Could not locate required library PIL")
-    notify("XBMC Hue", "ERROR: Could not import Python PIL")
-
-try:
   import requests
 except ImportError:
   log("ERROR: Could not locate required library requests")
