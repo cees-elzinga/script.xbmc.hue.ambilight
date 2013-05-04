@@ -55,3 +55,5 @@ You'll have to create two custom groups:
 Configure the add-on in ambilight mode and set it to "use all lights". Now go to the advanced section and override the group ID of "use all lights" to group 1 (the 2 lights next to the television). Ambilight is now enabled to only use those two lights.
 
 In the advanced section toggle the option "Ambilight: dim all lights when playback starts" and set "Ambilight: group ID when dimming lights" to group 2.
+
+Note: It doesn't matter if the bulbs overlap in the groups, if amilight is enable for a group those will be reactivated.
