@@ -1,10 +1,3 @@
-"Use all lights" doesn't work for me
-------------------------------------
-
-If the add-on is configured to "Use all lights", bulb number 2 has a special function. This bulb is "leading", ie the settings from this bulb are used for the whole group. Make sure this light is turned on when you start XBMC. If not, the add-on thinks the complete group is turned off.
-
-You can override the leading bulb in the advanced settings.
-
 Creating a custom group
 -----------------------
 
@@ -40,6 +33,13 @@ You can confirm the group is created by visiting the website:
 
 `http://192.168.10.10/api/762cbb1fb7191475ea13181e18848cd7/groups/1`
 
+Now, **you'll have to restart the bridge before the group actually works**
+
+Check if the group is working by issuing the following request
+
+`curl --request PUT "http://192.168.10.10/api/762cbb1fb7191475ea13181e18848cd7/groups/1/action" --data '{"on":true,"bri":255,"hue":65000}' -H "Content-Type: application/json"`
+
+That should turn the bulbs in this group bright red.
 
 I would like to use only 2 lamps for ambilight, and turn 2 other lights off
 ---------------------------------------------------------------------------
@@ -56,4 +56,4 @@ Configure the add-on in ambilight mode and set it to "use all lights". Now go to
 
 In the advanced section toggle the option "Ambilight: dim all lights when playback starts" and set "Ambilight: group ID when dimming lights" to group 2.
 
-Note: It doesn't matter if the bulbs overlap in the groups, if amilight is enable for a group those will be reactivated.
+**Using ambilight for a group is slow**, it works way better if you use it with a single bulb. (It appears the bridge is slow when updating the configuration of a group)

@@ -17,8 +17,6 @@ class settings():
     self.ambilight_dim         = __addon__.getSetting("ambilight_dim") == "true"
     self.ambilight_dim_group   = int(__addon__.getSetting("ambilight_dim_group"))
     self.group_id              = int(__addon__.getSetting("group_id"))
-    self.group_primary         = int(__addon__.getSetting("group_primary"))
-    self.ambilight_dim_primary = int(__addon__.getSetting("ambilight_dim_primary"))
     self.undim_hue             = int(__addon__.getSetting("undim_hue").split(".")[0])
     self.undim_bri             = int(int(__addon__.getSetting("undim_bri").split(".")[0])*254/100)
     self.dimmed_hue            = int(__addon__.getSetting("dimmed_hue").split(".")[0])

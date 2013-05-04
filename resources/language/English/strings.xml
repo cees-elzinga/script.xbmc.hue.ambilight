@@ -24,8 +24,6 @@
   <string id="263">Ambilight: group ID when dimming lights</string>
   <string id="264">Dimmed Hue</string>
   <string id="265">Undimmed Hue</string>
-  <string id="266">Primary light of this group (see FAQ)</string>
-  <string id="267">Ambilight: primary light of this group (see FAQ)</string>
   <string id="305">Misc settings</string>
   <string id="310">Enable initial flash</string>
 </strings>

@@ -13,7 +13,6 @@
     </category>
     <category label="115">
         <setting id="group_id" type="number" label="121" default="0" />
-        <setting id="group_primary" type="number" label="266" default="2" />
         <setting id="dimmed_bri" label="119" type="slider" default="0" range="0,5,100" option="int" />
         <setting id="undim_bri" label="120" type="slider" default="80" range="0,5,100" option="int" />
         <setting id="dimmed_hue" type="slider" label="264" default="22755" range="0,1000,65534" option="int" />
@@ -21,6 +20,5 @@
         <setting type="lsep" label="202" />
         <setting id="ambilight_dim" type="bool" label="260" default="false" />
         <setting id="ambilight_dim_group" type="number" label="263" default="0" />
-        <setting id="ambilight_dim_primary" type="number" label="267" default="2" />
     </category>
 </settings>

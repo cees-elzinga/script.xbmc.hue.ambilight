@@ -137,19 +137,42 @@ class Light:
 
 class Group(Light):
   group = True
+  lights = {}
 
-  def __init__(self, bridge_ip, bridge_user, group_id, primary, dimmed_bri, dimmed_hue, undim_bri,  undim_hue):
+  def __init__(self, bridge_ip, bridge_user, group_id, dimmed_bri, dimmed_hue, undim_bri,  undim_hue):
     Light.__init__(
       self,
       bridge_ip,
       bridge_user,
-      primary,
+      2,
       dimmed_bri,
       dimmed_hue,
       undim_bri,
       undim_hue
     )
     self.group_id = group_id
+   
+    for light in self.get_lights():
+      tmp = Light(
+        bridge_ip,
+        bridge_user,
+        light,
+        dimmed_bri,
+        dimmed_hue,
+        undim_bri,
+        undim_hue
+      )
+      tmp.get_current_setting()
+      if tmp.start_setting['on']:
+        self.lights[light] = tmp
+      else:
+        self.lights[light] = False
+
+  def get_lights(self):
+    r = requests.get("http://%s/api/%s/groups/%s" % \
+      (self.bridge_ip, self.bridge_user, self.group_id))
+    j = r.json()
+    return j['lights']
 
   def set_light(self, data):
     Light.request_url_put(self, "http://%s/api/%s/groups/%s/action" % \
@@ -163,17 +186,22 @@ class Group(Light):
         "bri": bri,
         #"bri": 254,
     })
-
+    
     self.request_url_put("http://%s/api/%s/groups/%s/action" % \
       (self.bridge_ip, self.bridge_user, self.group_id), data=data)
 
   def dim_light(self):
-    # Setting the brightness of a group to 0 does not turn the lights off
-    # workaround: dim the lights first, then turn them off
-    dimmed = '{"on":true,"bri":%s,"hue":%s,"transitiontime":4}' % \
-      (self.dimmed_bri, self.dimmed_hue)
-    self.set_light(dimmed)
+    for light in self.get_lights():
+      if self.lights[light]:
+        self.lights[light].dim_light()
 
-    if self.dimmed_bri == 0:
-        off = '{"on":false}'
-        self.set_light(off)
+  def brighter_light(self):
+      for light in self.get_lights():
+        if self.lights[light]:
+          self.lights[light].brighter_light()
+
+  def request_url_put(self, url, data):
+    try:
+      self.s.put(url, data=data)
+    except Exception as e:
+      pass # probably a timeout
