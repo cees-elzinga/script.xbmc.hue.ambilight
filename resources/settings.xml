@@ -1,17 +1,26 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
-  <category label="100">
-    <setting id="discover_bridge" type="action" label="101" action="RunScript(script.xbmc.hue.ambilight,action=discover)" />
-    <setting id="bridge_ip" type="text" label="102" enable="!eq(-1,true)" default="-" />
-    <setting id="bridge_user" type="text" label="103" enable="!eq(-1,true)" default="-" />
-    <setting id="sep1" type="sep" />
-    <setting id="light" type="enum" enable="true" label="109" default="0" lvalues="110|111|112|113" />
-    <setting id="notice" type="action" label="250" />
-    <setting id="sep2" type="sep" />
-    <setting id="mode" type="enum" enable="true" label="201" default="0" lvalues="202|203" />
-    <setting id="sep3" type="sep" />
-    <setting label="120" type="slider" id="dim_brightness" default="0" range="0,5,100" option="int" />
-    <setting id="sep4" type="sep" />
-    <setting id="misc_initialflash" type="bool" label="310" default="true" />
-  </category>
+    <category label="100">
+        <setting type="lsep" label="100" />
+        <setting id="discover_bridge" type="action" label="101" action="RunScript(script.xbmc.hue.ambilight,action=discover)" />
+        <setting id="bridge_ip" type="text" label="102" enable="!eq(-1,true)" default="-" />
+        <setting id="bridge_user" type="text" label="103" enable="!eq(-1,true)" default="-" />
+        <setting type="lsep" label="200" />
+        <setting id="mode" type="enum" enable="true" label="201" default="0" lvalues="202|203" />
+        <setting id="light" type="enum" enable="true" label="109" default="0" lvalues="110|111|112|113" />
+        <setting type="lsep" label="305" />
+        <setting id="misc_initialflash" type="bool" label="310" default="true" />
+    </category>
+    <category label="115">
+        <setting id="group_id" type="number" label="121" default="0" />
+        <setting id="group_primary" type="number" label="266" default="2" />
+        <setting id="dimmed_bri" label="119" type="slider" default="0" range="0,5,100" option="int" />
+        <setting id="undim_bri" label="120" type="slider" default="80" range="0,5,100" option="int" />
+        <setting id="dimmed_hue" type="slider" label="264" default="22755" range="0,1000,65534" option="int" />
+        <setting id="undim_hue" type="slider" label="265" default="22755" range="0,1000,65534" option="int" />
+        <setting type="lsep" label="202" />
+        <setting id="ambilight_dim" type="bool" label="260" default="false" />
+        <setting id="ambilight_dim_group" type="number" label="263" default="0" />
+        <setting id="ambilight_dim_primary" type="number" label="267" default="2" />
+    </category>
 </settings>

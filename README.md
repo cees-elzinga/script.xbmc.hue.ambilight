@@ -40,6 +40,7 @@ If you like the add-on, donations are always welcome :)
 
 Release history
 ---------------
+  * 2013-05-04 v 0.4.0 Advanced settings
   * 2013-04-30 v 0.3.8 Documentation bump
   * 2013-04-25 v 0.3.6 Custom dimmed brightness in theatre mode
   * 2013-04-22 v 0.3.5 Ignore the light if it's turned off. Only act on video playback

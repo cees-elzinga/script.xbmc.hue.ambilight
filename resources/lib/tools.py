@@ -64,22 +64,34 @@ def register_user(hue_ip):
 
   return username
 
+def mixed_mode(hue):
+  if hue.settings.mode == 0 and hue.settings.ambilight_dim:
+    return True
+  else:
+    return False
+
 class Light:
   start_setting = None
   group = False
 
-  def __init__(self, bridge_ip, bridge_user, light):
+  def __init__(self, bridge_ip, bridge_user, light, dimmed_bri, dimmed_hue, undim_bri, undim_hue):
     self.bridge_ip = bridge_ip
     self.bridge_user = bridge_user
     self.light = light
+    self.dimmed_bri = dimmed_bri
+    self.dimmed_hue = dimmed_hue
+    self.undim_bri = undim_bri
+    self.undim_hue = undim_hue
     self.get_current_setting()
 
     self.s = requests.Session()
 
   def request_url_put(self, url, data):
-    #r = requests.put(url, data=data)
     if self.start_setting['on']:
-      self.s.put(url, data=data)
+      try:
+        self.s.put(url, data=data)
+      except:
+        pass # probably a timeout
 
   def get_current_setting(self):
     r = requests.get("http://%s/api/%s/lights/%s" % \
@@ -103,7 +115,6 @@ class Light:
         "sat": sat,
         "bri": bri,
         #"bri": 254,
-        #"transitiontime":0
     })
 
     self.request_url_put("http://%s/api/%s/lights/%s/state" % \
@@ -113,27 +124,36 @@ class Light:
     self.dim_light(10)
     self.brighter_light()
 
-  def dim_light(self, bri):
+  def dim_light(self):
     #self.get_current_setting()
-    dimmed = '{"on":true,"bri":%s,"transitiontime":4}' % bri
+    dimmed = '{"on":true,"bri":%s,"hue":%s,"transitiontime":4}' % \
+      (self.dimmed_bri, self.dimmed_hue)
     self.set_light(dimmed)
 
   def brighter_light(self):
-    on = '{"on":true,"bri":%d,"transitiontime":4}' % self.start_setting['bri']
+    on = '{"on":true,"bri":%d,"hue":%s,"transitiontime":4}' % \
+      (self.undim_bri, self.undim_hue)
     self.set_light(on)
 
 class Group(Light):
-  # Only use a group if we want to control all lights
-  # Creating and modifying custom groups on the fly does not work as expected
-  #  and requires reboots of the bridge
   group = True
 
-  def __init__(self, bridge_ip, bridge_user):
-    Light.__init__(self, bridge_ip, bridge_user, 2)
+  def __init__(self, bridge_ip, bridge_user, group_id, primary, dimmed_bri, dimmed_hue, undim_bri,  undim_hue):
+    Light.__init__(
+      self,
+      bridge_ip,
+      bridge_user,
+      primary,
+      dimmed_bri,
+      dimmed_hue,
+      undim_bri,
+      undim_hue
+    )
+    self.group_id = group_id
 
   def set_light(self, data):
-    Light.request_url_put(self, "http://%s/api/%s/groups/0/action" % \
-      (self.bridge_ip, self.bridge_user), data=data)
+    Light.request_url_put(self, "http://%s/api/%s/groups/%s/action" % \
+      (self.bridge_ip, self.bridge_user, self.group_id), data=data)
 
   def set_light2(self, hue, sat, bri):
     data = json.dumps({
@@ -142,18 +162,18 @@ class Group(Light):
         "sat": sat,
         "bri": bri,
         #"bri": 254,
-        #"transitiontime":0
     })
 
-    self.request_url_put("http://%s/api/%s/groups/0/action" % \
-      (self.bridge_ip, self.bridge_user), data=data)
+    self.request_url_put("http://%s/api/%s/groups/%s/action" % \
+      (self.bridge_ip, self.bridge_user, self.group_id), data=data)
 
-  def dim_light(self, bri):
+  def dim_light(self):
     # Setting the brightness of a group to 0 does not turn the lights off
-    # Turning the lights off with a transitiontime does not work as expected
     # workaround: dim the lights first, then turn them off
-    dimmed = '{"on":true,"bri":%s,"transitiontime":4}' % bri
+    dimmed = '{"on":true,"bri":%s,"hue":%s,"transitiontime":4}' % \
+      (self.dimmed_bri, self.dimmed_hue)
     self.set_light(dimmed)
-    if bri == 0:
+
+    if self.dimmed_bri == 0:
         off = '{"on":false}'
         self.set_light(off)

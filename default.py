@@ -131,7 +131,7 @@ class Hue:
       self.connected = True
 
   def dim_lights(self):
-    self.light.dim_light(self.settings.dim_brightness)
+    self.light.dim_light()
         
   def brighter_lights(self):
     self.light.brighter_light()
@@ -139,12 +139,29 @@ class Hue:
   def update_settings(self):
     if self.settings.light == 0 and \
         (self.light is None or self.light.group is not True):
-      self.light = Group(self.settings.bridge_ip, self.settings.bridge_user)
+      self.light = Group(
+        self.settings.bridge_ip,
+        self.settings.bridge_user,
+        self.settings.group_id,
+        self.settings.group_primary,
+        self.settings.dimmed_bri,
+        self.settings.dimmed_hue,
+        self.settings.undim_bri,
+        self.settings.undim_hue,
+      )
     elif self.settings.light > 0 and \
           (self.light is None or \
           self.light.group == True or \
           self.light.light != self.settings.light):
-      self.light = Light(self.settings.bridge_ip, self.settings.bridge_user, self.settings.light)
+      self.light = Light(
+        self.settings.bridge_ip,
+        self.settings.bridge_user,
+        self.settings.light,
+        self.settings.dimmed_bri,
+        self.settings.dimmed_hue,
+        self.settings.undim_bri,
+        self.settings.undim_hue,
+      )
 
 class Screenshot:
   def __init__(self, pixels, capture_width, capture_height):
@@ -212,10 +229,9 @@ class Screenshot:
     return h, s, v
 
 def run():
+  player = None
   last = datetime.datetime.now()
-  if hue.settings.mode == 1: # theatre mode
-      player = MyPlayer()
-
+  
   while not xbmc.abortRequested:
     if datetime.datetime.now() - last > datetime.timedelta(seconds=1):
       # check for updates every 1s (fixme: use callback function)
@@ -224,9 +240,27 @@ def run():
       hue.update_settings()
     
     if hue.settings.mode == 1: # theatre mode
+      if player == None:
+        player = MyPlayer()
       xbmc.sleep(500)
     if hue.settings.mode == 0: # ambilight mode
-      capture.waitForCaptureStateChangeEvent(1000)
+      if hue.settings.ambilight_dim:
+        if player == None:
+          hue.settings.dim_group = Group(
+            hue.settings.bridge_ip,
+            hue.settings.bridge_user,
+            hue.settings.ambilight_dim_group,
+            hue.settings.ambilight_dim_primary,
+            hue.settings.dimmed_bri,
+            hue.settings.dimmed_hue,
+            hue.settings.undim_bri,
+            hue.settings.undim_hue,
+          )
+          player = MyPlayer()
+        else:
+          xbmc.sleep(1)
+
+      capture.waitForCaptureStateChangeEvent(10)
       if capture.getCaptureState() == xbmc.CAPTURE_STATE_DONE:
         screen = Screenshot(capture.getImage(), capture.getWidth(), capture.getHeight())
         h, s, v = screen.get_hsv()
@@ -235,10 +269,21 @@ def run():
 def state_changed(state):
   if state == "started":
     hue.light.get_current_setting()
+
   if state == "started" or state == "resumed":
-    hue.dim_lights()
+    if mixed_mode(hue):
+      hue.settings.dim_group.dim_light()
+    else:
+      hue.dim_lights()
   elif state == "stopped" or state == "paused":
-    hue.brighter_lights()
+    if mixed_mode(hue):
+      # Be persistent in restoring the lights 
+      # (prevent from being overwritten by an ambilight update)
+      for i in range(0, 3):
+        hue.settings.dim_group.brighter_light()
+        time.sleep(1)
+    else:
+      hue.brighter_lights()
 
 if ( __name__ == "__main__" ):
   settings = settings()
