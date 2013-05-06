@@ -1,2 +1,5 @@
+0.4.2
+ - [fix] - bugfix
+
 0.4.0
  - [add] - advanced settings
