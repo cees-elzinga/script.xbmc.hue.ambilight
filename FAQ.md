@@ -1,7 +1,26 @@
+Why is ambilight using a group slow?
+------------------------------------
+
+Short answer: the bridge can't keep op
+
+Long answer: In ambilight mode the add-on continually tries to adjust the color of the lights. It might do so approx 3 times per second. Everytime it will tell the bridge to update the color, and the bridge will do so as fast as possible.
+
+If the bridge tries to update the color of a complete group, every once in a while it'll take the bridge 1.5 second to complete the update (in a quick test I did this happens 1 out of 5 times, or the bridge responded quickly but with an error). The add-on will continue to request an update 3 times/second, and the bridge gets out of sync with the video.
+
+I would like to use 1 lamp for ambilight, and turn 2 other lights off
+---------------------------------------------------------------------
+
+Say you have 8 bulbs, 3 of them are in the living room and 1 of those is next to the television. When playback starts 2 lights in the living room should be dimmed, and the one next to the television should be used as an ambilight.
+
+ - Create a custom group with the two lights you wish to turn off (see below)
+ - Configure ambilight mode for the single bulb next to the television
+ - In the advanced section, enable "Dim a group of lights when playback starts"
+ - Set the "Group ID to dim" to the ID of the newly created group in step 1
+
 Creating a custom group
 -----------------------
 
-The add-on supportrs using "custom groups". By default the Hue only has one group, called group "0". This means "all lights". This is the group the add-on uses when the option "use all lights" is selected. But if you want more flexibility you might want to create your own group. Eg you have 8 bulbs in total, but only the 4 in the living room should be controlled by this add-on.
+The add-on supports using "custom groups". By default the Hue only has one group, called group "0". This means "all lights". This is the group the add-on uses when the option "use all lights" is selected. But if you want more flexibility you might want to create your own group. Eg you have 8 bulbs in total, but only the 4 in the living room should be controlled by this add-on.
 
 Creating custom groups is not (yet) officially support. It is therefore not possible to do from the official Hue application. You can do it yourself but you'll need to some manual steps.
 
@@ -40,20 +59,3 @@ Check if the group is working by issuing the following request
 `curl --request PUT "http://192.168.10.10/api/762cbb1fb7191475ea13181e18848cd7/groups/1/action" --data '{"on":true,"bri":255,"hue":65000}' -H "Content-Type: application/json"`
 
 That should turn the bulbs in this group bright red.
-
-I would like to use only 2 lamps for ambilight, and turn 2 other lights off
----------------------------------------------------------------------------
-
-Say you have 8 bulbs, 4 of them are in the living room and 2 of those are next to the television. When playback starts 2 lights in the living room should be dimmed, and the two next to the television should be used as ambilights.
-
-You'll have to create two custom groups:
- - a group with the 2 lights you want dimmed
- - a group with the 2 lights you want to use for ambilight
-
-(See above on how to create a custom group, in the example the lights to be dimmed is group 2, and the 2 lights next to the television is group 1)
-
-Configure the add-on in ambilight mode and set it to "use all lights". Now go to the advanced section and override the group ID of "use all lights" to group 1 (the 2 lights next to the television). Ambilight is now enabled to only use those two lights.
-
-In the advanced section toggle the option "Ambilight: dim all lights when playback starts" and set "Ambilight: group ID when dimming lights" to group 2.
-
-**Using ambilight for a group is slow**, it works way better if you use it with a single bulb. (It appears the bridge is slow when updating the configuration of a group)
