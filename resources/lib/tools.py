@@ -169,7 +169,7 @@ class Group(Light):
       j = r.json()
     except:
       log("WARNING: Request fo bridge failed")
-      notify("Communication Failed", "Error while talking to the bridge")
+      #notify("Communication Failed", "Error while talking to the bridge")
 
     try:
       return j['lights']
@@ -195,7 +195,7 @@ class Group(Light):
         (self.bridge_ip, self.bridge_user, self.group_id), data=data)
     except:
       log("WARNING: Request fo bridge failed")
-      notify("Communication Failed", "Error while talking to the bridge")
+      #notify("Communication Failed", "Error while talking to the bridge")
       pass
 
   def dim_light(self):
@@ -213,5 +213,5 @@ class Group(Light):
       self.s.put(url, data=data)
     except Exception as e:
       log("WARNING: Request fo bridge failed")
-      notify("Communication Failed", "Error while talking to the bridge")
+      #notify("Communication Failed", "Error while talking to the bridge")
       pass # probably a timeout
