@@ -1,7 +1,7 @@
 Why is ambilight using a group slow?
 ------------------------------------
 
-Short answer: the bridge can't keep op
+Short answer: the bridge can't keep up
 
 Long answer: In ambilight mode the add-on continually tries to adjust the color of the lights. It might do so approx 3 times per second. Everytime it will tell the bridge to update the color, and the bridge will do so as fast as possible.
 
