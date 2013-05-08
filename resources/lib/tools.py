@@ -163,9 +163,14 @@ class Group(Light):
         self.lights[light] = False
 
   def get_lights(self):
-    r = requests.get("http://%s/api/%s/groups/%s" % \
-      (self.bridge_ip, self.bridge_user, self.group_id))
-    j = r.json()
+    try:
+      r = requests.get("http://%s/api/%s/groups/%s" % \
+        (self.bridge_ip, self.bridge_user, self.group_id))
+      j = r.json()
+    except:
+      log("WARNING: Request fo bridge failed")
+      notify("Communication Failed", "Error while talking to the bridge")
+
     try:
       return j['lights']
     except:
@@ -185,8 +190,13 @@ class Group(Light):
         #"bri": 254,
     })
     
-    self.request_url_put("http://%s/api/%s/groups/%s/action" % \
-      (self.bridge_ip, self.bridge_user, self.group_id), data=data)
+    try:
+      self.request_url_put("http://%s/api/%s/groups/%s/action" % \
+        (self.bridge_ip, self.bridge_user, self.group_id), data=data)
+    except:
+      log("WARNING: Request fo bridge failed")
+      notify("Communication Failed", "Error while talking to the bridge")
+      pass
 
   def dim_light(self):
     for light in self.get_lights():
@@ -202,4 +212,6 @@ class Group(Light):
     try:
       self.s.put(url, data=data)
     except Exception as e:
+      log("WARNING: Request fo bridge failed")
+      notify("Communication Failed", "Error while talking to the bridge")
       pass # probably a timeout
