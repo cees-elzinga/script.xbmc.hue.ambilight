@@ -151,11 +151,11 @@ class Hue:
     elif self.settings.light > 0 and \
           (self.light is None or \
           self.light.group == True or \
-          self.light.light != self.settings.light):
+          self.light.light != self.settings.light_id):
       self.light = Light(
         self.settings.bridge_ip,
         self.settings.bridge_user,
-        self.settings.light,
+        self.settings.light_id,
         self.settings.dimmed_bri,
         self.settings.dimmed_hue,
         self.settings.undim_bri,
@@ -232,6 +232,7 @@ def run():
   last = datetime.datetime.now()
   
   while not xbmc.abortRequested:
+
     if datetime.datetime.now() - last > datetime.timedelta(seconds=1):
       # check for updates every 1s (fixme: use callback function)
       last = datetime.datetime.now()
@@ -243,8 +244,8 @@ def run():
         player = MyPlayer()
       xbmc.sleep(500)
     if hue.settings.mode == 0: # ambilight mode
-      if hue.settings.ambilight_dim:
-        if player == None:
+      if player == None:
+        if hue.settings.ambilight_dim:
           hue.settings.dim_group = Group(
             hue.settings.bridge_ip,
             hue.settings.bridge_user,
@@ -254,27 +255,30 @@ def run():
             hue.settings.undim_bri,
             hue.settings.undim_hue,
           )
-          player = MyPlayer()
         else:
-          xbmc.sleep(1)
+          hue.settings.dim_group = hue.light
+        player = MyPlayer()
+      else:
+        xbmc.sleep(1)
 
       capture.waitForCaptureStateChangeEvent(10)
       if capture.getCaptureState() == xbmc.CAPTURE_STATE_DONE:
-        screen = Screenshot(capture.getImage(), capture.getWidth(), capture.getHeight())
-        h, s, v = screen.get_hsv()
-        hue.light.set_light2(h, s, v)
+        if player.playingvideo:
+          screen = Screenshot(capture.getImage(), capture.getWidth(), capture.getHeight())
+          h, s, v = screen.get_hsv()
+          hue.light.set_light2(h, s, v)
 
 def state_changed(state):
   if state == "started":
     hue.light.get_current_setting()
 
   if state == "started" or state == "resumed":
-    if mixed_mode(hue):
+    if hue.settings.mode == 0 and hue.settings.ambilight_dim: # only if a complete group
       hue.settings.dim_group.dim_light()
     else:
       hue.dim_lights()
   elif state == "stopped" or state == "paused":
-    if mixed_mode(hue):
+    if hue.settings.mode == 0:
       # Be persistent in restoring the lights 
       # (prevent from being overwritten by an ambilight update)
       for i in range(0, 3):

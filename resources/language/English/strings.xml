@@ -1,29 +1,33 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <strings>
   <string id="100">Bridge configuration</string>
-  <string id="100">General</string>
   <string id="101">Click me for automatic configuration</string>
   <string id="102">Bridge IP</string>
   <string id="103">Bridge User</string>
-  <string id="109">Light</string>
-  <string id="110">Use all lights</string>
-  <string id="111">Light 1</string>
-  <string id="112">Light 2</string>
-  <string id="113">Light 3</string>
-  <string id="115">Advanced settings</string>
-  <string id="119">Dimmed brightness</string>
-  <string id="120">Undimmed brightness</string>
-  <string id="121">Group ID when using "all lights"</string>
+
   <string id="200">Mode</string>
   <string id="201">Mode</string>
   <string id="202">Ambilight</string>
   <string id="203">Theatre</string>
-  <string id="250">Ambilight settings</string>
-  <string id="260">Ambilight: dim all lights when playback starts</string>
-  <string id="262">Advanced</string>
-  <string id="263">Ambilight: group ID when dimming lights</string>
-  <string id="264">Dimmed Hue</string>
-  <string id="265">Undimmed Hue</string>
-  <string id="305">Misc settings</string>
-  <string id="310">Enable initial flash</string>
+
+  <string id="300">Lights</string>
+  <string id="301">Enable</string>
+  <string id="302">a group of lights</string>
+  <string id="303">a single light</string>
+  <string id="304">Light bulb ID</string>
+  <string id="305">Group id (0=all lights)</string>
+  <string id="306">Ambilight using a group of lights is too slow (but you're welcome to try)</string>
+
+  <string id="400">Misc settings</string>
+  <string id="401">Enable initial flash</string>
+
+  <string id="500">Advanced settings</string>
+  <string id="501">Dimmed brightness</string>
+  <string id="502">Undimmed brightness</string>
+  <string id="503">Dimmed Hue color</string>
+  <string id="504">Undimmed Hue color</string>
+
+  <string id="600">Ambilight</string>
+  <string id="601">Dim a group of lights when playback starts</string>
+  <string id="602">Group ID to dim</string>
 </strings>

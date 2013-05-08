@@ -64,12 +64,6 @@ def register_user(hue_ip):
 
   return username
 
-def mixed_mode(hue):
-  if hue.settings.mode == 0 and hue.settings.ambilight_dim:
-    return True
-  else:
-    return False
-
 class Light:
   start_setting = None
   group = False
@@ -121,7 +115,7 @@ class Light:
       (self.bridge_ip, self.bridge_user, self.light), data=data)
 
   def flash_light(self):
-    self.dim_light(10)
+    self.dim_light()
     self.brighter_light()
 
   def dim_light(self):
@@ -172,7 +166,11 @@ class Group(Light):
     r = requests.get("http://%s/api/%s/groups/%s" % \
       (self.bridge_ip, self.bridge_user, self.group_id))
     j = r.json()
-    return j['lights']
+    try:
+      return j['lights']
+    except:
+      # user probably selected a non-existing group
+      return []
 
   def set_light(self, data):
     Light.request_url_put(self, "http://%s/api/%s/groups/%s/action" % \

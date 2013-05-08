@@ -1,3 +1,6 @@
+0.4.3
+ - [add] - improved advanced settings
+
 0.4.2
  - [fix] - bugfix
 

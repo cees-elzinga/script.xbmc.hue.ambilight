@@ -7,18 +7,21 @@
         <setting id="bridge_user" type="text" label="103" enable="!eq(-1,true)" default="-" />
         <setting type="lsep" label="200" />
         <setting id="mode" type="enum" enable="true" label="201" default="0" lvalues="202|203" />
-        <setting id="light" type="enum" enable="true" label="109" default="0" lvalues="110|111|112|113" />
-        <setting type="lsep" label="305" />
-        <setting id="misc_initialflash" type="bool" label="310" default="true" />
+        <setting type="lsep" label="300" />
+        <setting id="light" type="enum" enable="true" label="301" default="1" lvalues="302|303" />
+        <setting id="light_id" type="number" label="304" default="1" enable="eq(-1,1)" visible="eq(-1,1)" />
+        <setting id="group_id" type="number" label="305" default="0" visible ="eq(-2,0)" enable="eq(-2,0)" />
+        <setting id="ambilight_info" type="action" label="306" visible="eq(-3,0) + eq(-5,0)" />
+        <setting type="lsep" label="400" />
+        <setting id="misc_initialflash" type="bool" label="401" default="true" />
     </category>
-    <category label="115">
-        <setting id="group_id" type="number" label="121" default="0" />
-        <setting id="dimmed_bri" label="119" type="slider" default="0" range="0,5,100" option="int" />
-        <setting id="undim_bri" label="120" type="slider" default="80" range="0,5,100" option="int" />
-        <setting id="dimmed_hue" type="slider" label="264" default="22755" range="0,1000,65534" option="int" />
-        <setting id="undim_hue" type="slider" label="265" default="22755" range="0,1000,65534" option="int" />
-        <setting type="lsep" label="202" />
-        <setting id="ambilight_dim" type="bool" label="260" default="false" />
-        <setting id="ambilight_dim_group" type="number" label="263" default="0" />
+    <category label="500">
+        <setting id="dimmed_bri" label="501" type="slider" default="0" range="0,5,100" option="int" />
+        <setting id="undim_bri" label="502" type="slider" default="80" range="0,5,100" option="int" />
+        <setting id="dimmed_hue" type="slider" label="503" default="22755" range="0,1000,65534" option="int" />
+        <setting id="undim_hue" type="slider" label="504" default="22755" range="0,1000,65534" option="int" />
+        <setting type="lsep" label="600" />
+        <setting id="ambilight_dim" type="bool" label="601" default="false" />
+        <setting id="ambilight_dim_group" type="number" label="602" default="0" enable="eq(-1,true)" visible="eq(-1,true)" />
     </category>
 </settings>
