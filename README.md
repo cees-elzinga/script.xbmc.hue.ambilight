@@ -20,12 +20,12 @@ The add-on depends on the XBMC add-on "requests" for the ambilight mode. If you 
 
  - XBMC add-on script.module.requests
 
-Download the add-on as a ZIP file from https://github.com/beenje/script.module.requests (Right click on the "ZIP" icon and select "Download Linked File"). Open XBMC and go to System -> Settings -> Add-ons -> Install from zip file, and select the zip file.
+Download the add-on as a ZIP file from https://github.com/beenje/script.module.requests (Right click on the "ZIP" icon and select "Download Linked File"). Open XBMC and go to `System -> Settings -> Add-ons -> Install from zip file`, and select the zip file.
 
  - XBMC add-on script.xbmc.hue.ambilight
 
 Download the add-on as a ZIP file from the top of this page (Right click on the "ZIP" icon and select "Download Linked File"). Open XBMC and go to System -> Settings -> Add-ons -> Install from zip file. Restart XBMC and configure the add-on:
-System -> Settings -> Add-ons -> Enabled add-ons -> Services -> XBMC Philips Hue and run "Start auto discovery of bridge IP and User".
+`System -> Settings -> Add-ons -> Enabled add-ons -> Services -> XBMC Philips Hue` and run `Start auto discovery of bridge IP and User`.
 
 Note for Raspberry Pi users:
 
