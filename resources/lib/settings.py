@@ -19,6 +19,7 @@ class settings():
     self.misc_initialflash     = __addon__.getSetting("misc_initialflash") == "true"
 
     self.dimmed_bri            = int(int(__addon__.getSetting("dimmed_bri").split(".")[0])*254/100)
+    self.override_undim_bri    = __addon__.getSetting("override_undim_bri") == "true"
     self.undim_bri             = int(int(__addon__.getSetting("undim_bri").split(".")[0])*254/100)
     self.override_hue          = __addon__.getSetting("override_hue") == "true"
     self.dimmed_hue            = int(__addon__.getSetting("dimmed_hue").split(".")[0])

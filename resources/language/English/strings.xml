@@ -29,6 +29,7 @@
   <string id="503">Dimmed Hue color</string>
   <string id="504">Undimmed Hue color</string>
   <string id="505">Debug logging</string>
+  <string id="511">Override undim brightness</string>
 
   <string id="600">Ambilight</string>
   <string id="601">Dim a group of lights when playback starts</string>

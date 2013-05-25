@@ -1,5 +1,6 @@
 from nose.tools import *
 import os
+import time
 os.sys.path.append("./resources/lib/")
 
 NOSE = os.environ.get('NOSE', None)
@@ -18,6 +19,7 @@ class settings():
 	group_id	= 0
 	misc_initialflash = True
 	override_hue = True
+	override_undim_bri = True
 	dimmed_bri	= 0
 	undim_bri	= 228
 	dimmed_hue	= 10000
@@ -46,6 +48,7 @@ def test_current_setting():
 
 def test_set_light():
 	g.set_light('{"on":true,"hue":100,"transitiontime":4}')
+	time.sleep(1)
 
 	g.lights['1'].get_current_setting()
 	g.lights['2'].get_current_setting()
@@ -57,6 +60,7 @@ def test_set_light():
 
 def test_set_light2():
 	g.set_light2(20000, 100, 100)
+	time.sleep(2)
 	g.lights['1'].get_current_setting()
 	g.lights['2'].get_current_setting()
 	g.lights['3'].get_current_setting()
@@ -73,6 +77,7 @@ def test_set_light2():
 
 def test_dim_light():
 	g.dim_light()
+	time.sleep(2)
 	g.lights['1'].get_current_setting()
 	g.lights['2'].get_current_setting()
 	g.lights['3'].get_current_setting()
@@ -87,6 +92,7 @@ def test_dim_light():
 
 def test_brighter_light():
 	g.brighter_light()
+	time.sleep(2)
 	g.lights['1'].get_current_setting()
 	g.lights['2'].get_current_setting()
 	g.lights['3'].get_current_setting()

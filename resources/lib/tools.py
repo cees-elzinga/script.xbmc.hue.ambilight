@@ -92,6 +92,7 @@ class Light:
     self.dimmed_hue   = settings.dimmed_hue
     self.undim_bri    = settings.undim_bri
     self.undim_hue    = settings.undim_hue
+    self.override_undim_bri = settings.override_undim_bri
 
     self.get_current_setting()
     self.s = requests.Session()
@@ -156,11 +157,15 @@ class Light:
       self.set_light(off)
 
   def brighter_light(self):
+    data = '{"on":true,"transitiontime":4'
     if self.override_hue:
-      on = '{"on":true,"bri":%s,"hue":%s,"transitiontime":4}' % (self.undim_bri, self.undim_hue)
+      data += ',"hue":%s' % self.undim_hue
+    if self.override_undim_bri:
+      data += ',"bri":%s' % self.undim_bri
     else:
-      on = '{"on":true,"bri":%s,"transitiontime":4}' % self.undim_bri
-    self.set_light(on)
+      data += ',"bri":%s' % self.start_setting['bri']
+    data += "}"
+    self.set_light(data)
 
 class Group(Light):
   group = True
