@@ -22,10 +22,13 @@
   <string id="401">Enable initial flash</string>
 
   <string id="500">Advanced settings</string>
+  <string id="510">Changes will be active after restarting XBMC</string>
   <string id="501">Dimmed brightness</string>
   <string id="502">Undimmed brightness</string>
+  <string id="506">Override Hue colors</string>
   <string id="503">Dimmed Hue color</string>
   <string id="504">Undimmed Hue color</string>
+  <string id="505">Debug logging</string>
 
   <string id="600">Ambilight</string>
   <string id="601">Dim a group of lights when playback starts</string>

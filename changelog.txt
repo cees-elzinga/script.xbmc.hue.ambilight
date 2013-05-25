@@ -1,3 +1,9 @@
+0.5.0
+ - [feature] support livingwhite lights
+ - [feature] dim lights using current Hue settings
+ - [add] debug logging
+ - [add] nosetests
+
 0.4.3
  - [add] - improved advanced settings
 

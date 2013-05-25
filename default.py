@@ -1,4 +1,3 @@
-
 import xbmc
 import xbmcgui
 import xbmcaddon
@@ -17,19 +16,13 @@ sys.path.append (__resource__)
 from settings import *
 from tools import *
 
-SCRIPTNAME = "XBMC Hue"
-
-def log(msg):
-  global SCRIPTNAME
-  xbmc.log("%s: %s" % (SCRIPTNAME, msg))
-
 try:
   import requests
 except ImportError:
-  log("ERROR: Could not locate required library requests")
+  xbmc.log("ERROR: Could not locate required library requests")
   notify("XBMC Hue", "ERROR: Could not import Python requests")
 
-log("Service started")
+xbmc.log("XBMC Hue service started, version: %s" % get_version())
 # Assume a ratio of 4/3
 capture_width = 100
 capture_height = 75
@@ -37,7 +30,7 @@ capture_height = 75
 capture = xbmc.RenderCapture()
 fmt = capture.getImageFormat()
 # probably BGRA
-# log("Image format: %s" % fmt)
+# xbmc.log("Image format: %s" % fmt)
 
 capture.capture(capture_width, capture_height, xbmc.CAPTURE_FLAG_CONTINUOUS)
 
@@ -77,8 +70,13 @@ class Hue:
   connected = None
   last_state = None
   light = None
+  dim_group = None
 
   def __init__(self, settings, args):
+    self.logger = Logger()
+    if settings.debug:
+      self.logger.debug()
+
     self.settings = settings
     self._parse_argv(args)
 
@@ -89,13 +87,13 @@ class Hue:
       if self.settings.bridge_ip not in ["-", "", None]:
         self.test_connection()
     elif self.params['action'] == "discover":
-      log("Starting discover")
+      self.logger.debuglog("Starting discover")
       notify("Bridge discovery", "starting")
       hue_ip = start_autodisover()
       if hue_ip != None:
         notify("Bridge discovery", "Found bridge at: %s" % hue_ip)
         username = register_user(hue_ip)
-        log("Updating settings")
+        self.logger.debuglog("Updating settings")
         self.settings.update(bridge_ip = hue_ip)
         self.settings.update(bridge_user = username)
         notify("Bridge discovery", "Finished")
@@ -104,13 +102,14 @@ class Hue:
         notify("Bridge discovery", "Failed. Could not find bridge.")
     else:
       # not yet implemented
-      log("unimplemented action call: %s" % self.params['action'])
+      self.logger.debuglog("unimplemented action call: %s" % self.params['action'])
 
     if self.connected:
       if self.settings.misc_initialflash:
         self.flash_lights()
 
   def flash_lights(self):
+    self.logger.debuglog("class Hue: flashing lights")
     self.light.flash_light()
     
   def _parse_argv(self, args):
@@ -131,36 +130,26 @@ class Hue:
       self.connected = True
 
   def dim_lights(self):
+    self.logger.debuglog("class Hue: dim lights")
     self.light.dim_light()
         
   def brighter_lights(self):
+    self.logger.debuglog("class Hue: brighter lights")
     self.light.brighter_light()
 
   def update_settings(self):
+    self.logger.debuglog("class Hue: update settings")
+    self.logger.debuglog(settings)
     if self.settings.light == 0 and \
         (self.light is None or self.light.group is not True):
-      self.light = Group(
-        self.settings.bridge_ip,
-        self.settings.bridge_user,
-        self.settings.group_id,
-        self.settings.dimmed_bri,
-        self.settings.dimmed_hue,
-        self.settings.undim_bri,
-        self.settings.undim_hue,
-      )
+      self.logger.debuglog("creating Group instance")
+      self.light = Group(self.settings)
     elif self.settings.light > 0 and \
           (self.light is None or \
           self.light.group == True or \
           self.light.light != self.settings.light_id):
-      self.light = Light(
-        self.settings.bridge_ip,
-        self.settings.bridge_user,
-        self.settings.light_id,
-        self.settings.dimmed_bri,
-        self.settings.dimmed_hue,
-        self.settings.undim_bri,
-        self.settings.undim_hue,
-      )
+      self.logger.debuglog("creating Light instance")
+      self.light = Light(self.settings)
 
 class Screenshot:
   def __init__(self, pixels, capture_width, capture_height):
@@ -235,28 +224,24 @@ def run():
 
     if datetime.datetime.now() - last > datetime.timedelta(seconds=1):
       # check for updates every 1s (fixme: use callback function)
+      logger.debuglog("running in mode %s" % str(hue.settings.mode))
       last = datetime.datetime.now()
       hue.settings.readxml()
       hue.update_settings()
     
     if hue.settings.mode == 1: # theatre mode
       if player == None:
+        logger.debuglog("creating instance of player")
         player = MyPlayer()
       xbmc.sleep(500)
     if hue.settings.mode == 0: # ambilight mode
+      if hue.settings.ambilight_dim and hue.dim_group == None:
+        logger.debuglog("creating group to dim")
+        tmp = hue.settings
+        tmp.group_id = tmp.ambilight_dim_group
+        hue.dim_group = Group(tmp)
+      
       if player == None:
-        if hue.settings.ambilight_dim:
-          hue.settings.dim_group = Group(
-            hue.settings.bridge_ip,
-            hue.settings.bridge_user,
-            hue.settings.ambilight_dim_group,
-            hue.settings.dimmed_bri,
-            hue.settings.dimmed_hue,
-            hue.settings.undim_bri,
-            hue.settings.undim_hue,
-          )
-        else:
-          hue.settings.dim_group = hue.light
         player = MyPlayer()
       else:
         xbmc.sleep(1)
@@ -269,30 +254,40 @@ def run():
           hue.light.set_light2(h, s, v)
 
 def state_changed(state):
+  logger.debuglog("state changed to: %s" % state)
   if state == "started":
+    logger.debuglog("retrieving current setting before starting")
     hue.light.get_current_setting()
 
   if state == "started" or state == "resumed":
     if hue.settings.mode == 0 and hue.settings.ambilight_dim: # only if a complete group
-      hue.settings.dim_group.dim_light()
+      logger.debuglog("dimming group for ambilight")
+      hue.dim_group.dim_light()
     else:
+      logger.debuglog("dimming lights")
       hue.dim_lights()
   elif state == "stopped" or state == "paused":
     if hue.settings.mode == 0:
       # Be persistent in restoring the lights 
       # (prevent from being overwritten by an ambilight update)
       for i in range(0, 3):
-        hue.settings.dim_group.brighter_light()
+        logger.debuglog("brighter lights")
+        hue.dim_group.brighter_light()
         time.sleep(1)
     else:
       hue.brighter_lights()
 
 if ( __name__ == "__main__" ):
   settings = settings()
+  logger = Logger()
+  if settings.debug == True:
+    logger.debug()
+  
   args = None
   if len(sys.argv) == 2:
     args = sys.argv[1]
   hue = Hue(settings, args)
   while not hue.connected:
+    logger.debuglog("not connected")
     time.sleep(1)
   run()
