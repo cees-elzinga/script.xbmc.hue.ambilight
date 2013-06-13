@@ -197,10 +197,16 @@ class Screenshot:
         i += 1
 
         h = int(tmph * 360)
-        if spectrum.has_key(h):
-          spectrum[h] += 1
-        else:
-          spectrum[h] = 1
+        # skip low value and saturation
+        if int(tmpv * 32) > 0:
+          if int(tmps * 32) > 0:
+
+            # logger.debuglog("h s v %s %s %s " % (tmph, tmps, tmpv))
+
+            if spectrum.has_key(h):
+              spectrum[h] += 1 # tmpv
+            else:
+              spectrum[h] = 1 # tmpv
 
     s = int(s/i * 100)
     v = int(v/i * 100)
@@ -220,10 +226,15 @@ def run():
   player = None
   last = datetime.datetime.now()
   
+  hue1 = 0
+  val1 = 0
+  hue2 = 0
+  val2 = 0
+
   while not xbmc.abortRequested:
 
-    if datetime.datetime.now() - last > datetime.timedelta(seconds=1):
-      # check for updates every 1s (fixme: use callback function)
+    if datetime.datetime.now() - last > datetime.timedelta(seconds=10):
+      # check for settings updates every 10s (fixme: use callback function)
       logger.debuglog("running in mode %s" % str(hue.settings.mode))
       last = datetime.datetime.now()
       hue.settings.readxml()
@@ -246,7 +257,7 @@ def run():
       else:
         xbmc.sleep(1)
 
-      capture.waitForCaptureStateChangeEvent(10)
+      capture.waitForCaptureStateChangeEvent(1000/60)
       if capture.getCaptureState() == xbmc.CAPTURE_STATE_DONE:
         if player.playingvideo:
           screen = Screenshot(capture.getImage(), capture.getWidth(), capture.getHeight())
