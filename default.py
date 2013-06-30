@@ -186,7 +186,7 @@ class Hue:
     elif self.settings.light > 0 and \
           (self.light is None or \
           type(self.light) == Group or \
-          len(self.light) == 0 or \
+          len(self.light) != self.settings.light or \
           self.light[0].light != self.settings.light1_id or \
           (self.settings.light > 1 and self.light[1].light != self.settings.light2_id) or \
           (self.settings.light > 2 and self.light[2].light != self.settings.light3_id)):
@@ -200,47 +200,88 @@ class Hue:
         xbmc.sleep(1)
         self.light[2] = Light(self.settings.light3_id, self.settings)
 
+class HSVRatio:
+  def __init__(self, hue=0.0, saturation=0.0, value=0.0, ratio=0.0):
+    self.h = hue
+    self.s = saturation
+    self.v = value
+    self.ratio = ratio
+
+  def average(self, h, s, v):
+    self.h = (self.h + h)/2
+    self.s = (self.s + s)/2
+    self.v = (self.v + v)/2
+
+  def averageValue(self, overall_value):
+    if self.ratio > 0.5:
+      self.v = self.v * self.ratio + overall_value * (1-self.ratio)
+    else:
+      self.v = (self.v + overall_value)/2
+    
+
+  def hue(self):
+    h = int(self.h*65535) # on a scale from 0 <-> 65535
+    s = int(self.s*254)
+    v = int(self.v*254)
+    if v == 0:
+      if settings.dimmed_bri > 0:
+        v = hue.settings.dimmed_bri
+      else:
+        v = 48
+    return h, s, v
+
+  def __repr__(self):
+    return 'h: %s s: %s v: %s ratio: %s' % (self.h, self.s, self.v, self.ratio)
+
 class Screenshot:
   def __init__(self, pixels, capture_width, capture_height):
     self.pixels = pixels
     self.capture_width = capture_width
     self.capture_height = capture_height
 
-  def get_hsv(self):
-    h, s, v = self.spectrum_hsv(self.pixels, self.capture_width, self.capture_height)
-    h, s, v = self.hsv_to_hue(h, s, v)
-
-    return h, s, v
-
-  def most_used_spectrum(self, spectrum, saturation, value):
+  def most_used_spectrum(self, spectrum, saturation, value, size, overall_value):
     colorGroups = 18
     colorHueRatio = 360 / colorGroups
-    ranges = [0] * colorGroups
-    hue = {}
-    sat = [0] * colorGroups
-    val = [0] * colorGroups
+
+    hsvRatios = []
+    hsvRatiosDict = {}
 
     for i in range(360):
       if spectrum.has_key(i):
         colorIndex = int(i/colorHueRatio)
-        ranges[colorIndex] += spectrum[i]
-        if hue.has_key(colorIndex):
-          hue[colorIndex] = (hue[colorIndex] + i)/2
-        else:
-          hue[colorIndex] = i
-        sat[colorIndex] = (sat[colorIndex] + saturation[i])/2
-        val[colorIndex] = (val[colorIndex] + value[i])/2
+        pixelCount = spectrum[i]
 
-    if len(hue) > 0:
-      # logger.debuglog("ranges %s" % ranges)
-      # logger.debuglog("hue %s" % hue)
-      # logger.debuglog("sat %s" % sat)
-      # logger.debuglog("val %s" % val)
-      #return ranges.index(max(ranges))*10 + 5
-      index = ranges.index(max(ranges))
-      return hue[index], sat[index]*100, val[index]*100
+        if hsvRatiosDict.has_key(colorIndex):
+          hsvr = hsvRatiosDict[colorIndex]
+          hsvr.average(i/360.0, saturation[i], value[i])
+          hsvr.ratio = hsvr.ratio + pixelCount / float(size)
+
+        else:
+          hsvr = HSVRatio(i/360.0, saturation[i], value[i], pixelCount / float(size))
+          hsvRatiosDict[colorIndex] = hsvr
+          hsvRatios.append(hsvr)
+
+    colorCount = len(hsvRatios)
+    if colorCount > 1:
+      # sort colors by popularity
+      hsvRatios = sorted(hsvRatios, key=lambda hsvratio: hsvratio.ratio, reverse=True)
+      # logger.debuglog("hsvRatios %s" % hsvRatios)
+      
+      #return at least 3
+      if colorCount == 2:
+        hsvRatios.insert(0, hsvRatios[0])
+      
+      hsvRatios[0].averageValue(overall_value)
+      hsvRatios[1].averageValue(overall_value)
+      hsvRatios[2].averageValue(overall_value)
+      return hsvRatios
+
+    elif colorCount == 1:
+      hsvRatios[0].averageValue(overall_value)
+      return [hsvRatios[0]] * 3
+
     else:
-      return 0, 0, 0
+      return [HSVRatio()] * 3
 
   def spectrum_hsv(self, pixels, width, height):
     spectrum = {}
@@ -287,20 +328,9 @@ class Screenshot:
             saturation[h] = tmps
             value[h] = tmpv
 
-    v_overlall = int(v * 100 / i)
+    overall_value = v / float(i)
     # s_overall = int(s * 100 / i)
-    h, s, v = self.most_used_spectrum(spectrum, saturation, value)
-    v = v + v_overlall/2
-    return h, s, v
-
-  def hsv_to_hue(self, h, s, v):
-    h = int(h*65535/360.0) # on a scale from 0 <-> 65535
-    s = int(s*255/100.0)
-    v = int(v*255/100.0)
-
-    if v == 0:
-      v = 16
-    return h, s, v
+    return self.most_used_spectrum(spectrum, saturation, value, size, overall_value)
 
 def run():
   player = None
@@ -329,19 +359,20 @@ def run():
       if capture.getCaptureState() == xbmc.CAPTURE_STATE_DONE:
         if player.playingvideo:
           screen = Screenshot(capture.getImage(), capture.getWidth(), capture.getHeight())
-          h, s, v = screen.get_hsv()
+          hsvRatios = screen.spectrum_hsv(screen.pixels, screen.capture_width, screen.capture_height)
           if hue.settings.light == 0:
-            fade_light_hsv(hue.light, h, s, v)
+            fade_light_hsv(hue.light, hsvRatios[0])
           else:
-            fade_light_hsv(hue.light[0], h, s, v)
+            fade_light_hsv(hue.light[0], hsvRatios[0])
             if hue.settings.light > 1:
               xbmc.sleep(4)
-              fade_light_hsv(hue.light[1], h, s, v)
+              fade_light_hsv(hue.light[1], hsvRatios[1])
             if hue.settings.light > 2:
               xbmc.sleep(4)
-              fade_light_hsv(hue.light[2], h, s, v)
+              fade_light_hsv(hue.light[2], hsvRatios[2])
 
-def fade_light_hsv(light, h, s, v):
+def fade_light_hsv(light, hsvRatio):
+  h, s, v = hsvRatio.hue()
   hvec = abs(h - light.hueLast) % int(65535/2)
   hvec = float(hvec/128.0)
   svec = s - light.satLast
