@@ -138,7 +138,7 @@ class Light:
           "bri": bri,
       })
 
-    self.logger.debuglog("set_light2: %s" % data)
+    # self.logger.debuglog("set_light2: %s" % data)
     self.request_url_put("http://%s/api/%s/lights/%s/state" % \
       (self.bridge_ip, self.bridge_user, self.light), data=data)
 

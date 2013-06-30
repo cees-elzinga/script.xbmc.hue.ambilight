@@ -23,16 +23,12 @@ except ImportError:
   notify("XBMC Hue", "ERROR: Could not import Python requests")
 
 xbmc.log("XBMC Hue service started, version: %s" % get_version())
-# Assume a ratio of 4/3
-capture_width = 100
-capture_height = 75
 
 capture = xbmc.RenderCapture()
 fmt = capture.getImageFormat()
-# probably BGRA
-# xbmc.log("Image format: %s" % fmt)
-
-capture.capture(capture_width, capture_height, xbmc.CAPTURE_FLAG_CONTINUOUS)
+# BGRA or RGBA
+# xbmc.log("Hue Capture Image format: %s" % fmt)
+fmtRGBA = fmt == 'RGBA'
 
 class MyMonitor( xbmc.Monitor ):
   def __init__( self, *args, **kwargs ):
@@ -176,73 +172,97 @@ class Screenshot:
 
     return h, s, v
 
-  def most_used_spectrum(self, spectrum):
-    ranges = range(36)
+  def most_used_spectrum(self, spectrum, saturation, value):
+    ranges = [0] * 36
+    hue = {}
+    sat = [0] * 36
+    val = [0] * 36
 
     for i in range(360):
       if spectrum.has_key(i):
-        ranges[int(i/10)] += spectrum[i]
+        colorIndex = int(i/10)
+        ranges[colorIndex] += spectrum[i]
+        if hue.has_key(colorIndex):
+          hue[colorIndex] = (hue[colorIndex] + i)/2
+        else:
+          hue[colorIndex] = i
+        sat[colorIndex] = (sat[colorIndex] + saturation[i])/2
+        val[colorIndex] = (val[colorIndex] + value[i])/2
 
-    return ranges.index(max(ranges))*10 + 5
+    if len(hue) > 0:
+      # logger.debuglog("ranges %s" % ranges)
+      # logger.debuglog("hue %s" % hue)
+      # logger.debuglog("sat %s" % sat)
+      # logger.debuglog("val %s" % val)
+      #return ranges.index(max(ranges))*10 + 5
+      index = ranges.index(max(ranges))
+      return hue[index], sat[index]*100, val[index]*100
+    else:
+      return 0, 0, 0
 
   def spectrum_hsv(self, pixels, width, height):
     spectrum = {}
+    saturation = {}
+    value = {}
+
+    size = int(len(pixels)/4)
+    pixel = 0
 
     i = 0
     s, v = 0, 0
+    r, g, b = 0, 0, 0
+    tmph, tmps, tmpv = 0, 0, 0
+    
+    for i in range(size):
+      if fmtRGBA:
+        r = pixels[pixel]
+        g = pixels[pixel + 1]
+        b = pixels[pixel + 2]
+      else: #probably BGRA
+        b = pixels[pixel]
+        g = pixels[pixel + 1]
+        r = pixels[pixel + 2]
+      pixel += 4
 
-    g_b, g_g, g_r, g_a = 0, 0, 0, 0
-    for y in range(height):
-      row = width * y * 4
-      for x in range(width/5 - 5):
-        b = pixels[row + x * 4 * 5 + y%5]
-        g = pixels[row + x * 4 * 5 + y%5 + 1]
-        r = pixels[row + x * 4 * 5 + y%5 + 2]
-        a = pixels[row + x * 4 * 5 + y%5 + 3]
-        g_b += b
-        g_g += g
-        g_r += r
-        g_a += a
+      tmph, tmps, tmpv = colorsys.rgb_to_hsv(float(r/255.0), float(g/255.0), float(b/255.0))
+      s += tmps
+      v += tmpv
 
-        tmph, tmps, tmpv = colorsys.rgb_to_hsv(float(r/255.0), float(g/255.0), float(b/255.0))
-        s += tmps
-        v += tmpv
-        i += 1
+      # skip low value and saturation
+      if tmpv > 0.25:
+        if tmps > 0.33:
+          h = int(tmph * 360)
 
-        h = int(tmph * 360)
-        # skip low value and saturation
-        if int(tmpv * 32) > 0:
-          if int(tmps * 32) > 0:
+          # logger.debuglog("%s \t set pixel r %s \tg %s \tb %s" % (i, r, g, b))
+          # logger.debuglog("%s \t set pixel h %s \ts %s \tv %s" % (i, tmph*100, tmps*100, tmpv*100))
 
-            # logger.debuglog("h s v %s %s %s " % (tmph, tmps, tmpv))
+          if spectrum.has_key(h):
+            spectrum[h] += 1 # tmps * 2 * tmpv
+            saturation[h] = (saturation[h] + tmps)/2
+            value[h] = (value[h] + tmpv)/2
+          else:
+            spectrum[h] = 1 # tmps * 2 * tmpv
+            saturation[h] = tmps
+            value[h] = tmpv
 
-            if spectrum.has_key(h):
-              spectrum[h] += 1 # tmpv
-            else:
-              spectrum[h] = 1 # tmpv
-
-    s = int(s/i * 100)
-    v = int(v/i * 100)
-    h = self.most_used_spectrum(spectrum)
+    v_overlall = int(v * 100 / i)
+    # s_overall = int(s * 100 / i)
+    h, s, v = self.most_used_spectrum(spectrum, saturation, value)
+    v = v + v_overlall/2
     return h, s, v
 
   def hsv_to_hue(self, h, s, v):
-    h = int(float(h/360.0)*65535) # on a scale from 0 <-> 65535
-    s = int(float(s/100.0)*254)
-    v = int(float(v/100.0)*254)
+    h = int(h*65535/360.0) # on a scale from 0 <-> 65535
+    s = int(s*255/100.0)
+    v = int(v*255/100.0)
 
     if v == 0:
-      v = 75
+      v = 16
     return h, s, v
 
 def run():
   player = None
   last = datetime.datetime.now()
-  
-  hue1 = 0
-  val1 = 0
-  hue2 = 0
-  val2 = 0
 
   while not xbmc.abortRequested:
     
@@ -263,7 +283,7 @@ def run():
       else:
         xbmc.sleep(1)
 
-      capture.waitForCaptureStateChangeEvent(1000/60)
+      capture.waitForCaptureStateChangeEvent(1000/15)
       if capture.getCaptureState() == xbmc.CAPTURE_STATE_DONE:
         if player.playingvideo:
           screen = Screenshot(capture.getImage(), capture.getWidth(), capture.getHeight())
@@ -275,6 +295,11 @@ def state_changed(state):
   if state == "started":
     logger.debuglog("retrieving current setting before starting")
     hue.light.get_current_setting()
+    #start capture when playback starts
+    capture_width = 32 #100
+    capture_height = int(capture_width / capture.getAspectRatio())
+    logger.debuglog("capture %s x %s" % (capture_width, capture_height))
+    capture.capture(capture_width, capture_height, xbmc.CAPTURE_FLAG_CONTINUOUS)
 
   if state == "started" or state == "resumed":
     if hue.settings.mode == 0 and hue.settings.ambilight_dim: # only if a complete group
