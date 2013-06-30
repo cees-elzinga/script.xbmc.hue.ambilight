@@ -110,6 +110,7 @@ class Hue:
         self.settings.update(bridge_user = username)
         notify("Bridge discovery", "Finished")
         self.test_connection()
+        self.update_settings()
       else:
         notify("Bridge discovery", "Failed. Could not find bridge.")
     else:
@@ -283,7 +284,7 @@ def state_changed(state):
       logger.debuglog("dimming lights")
       hue.dim_lights()
   elif state == "stopped" or state == "paused":
-    if hue.settings.mode == 0:
+    if hue.settings.mode == 0 and hue.settings.ambilight_dim:
       # Be persistent in restoring the lights 
       # (prevent from being overwritten by an ambilight update)
       for i in range(0, 3):
