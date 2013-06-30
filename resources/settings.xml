@@ -8,10 +8,12 @@
         <setting type="lsep" label="200" />
         <setting id="mode" type="enum" enable="true" label="201" default="0" lvalues="202|203" />
         <setting type="lsep" label="300" />
-        <setting id="light" type="enum" enable="true" label="301" default="1" lvalues="302|303" />
-        <setting id="light_id" type="number" label="304" default="1" enable="eq(-1,1)" visible="eq(-1,1)" />
-        <setting id="group_id" type="number" label="305" default="0" visible ="eq(-2,0)" enable="eq(-2,0)" />
-        <setting id="ambilight_info" type="action" label="306" visible="eq(-3,0) + eq(-5,0)" />
+        <setting id="light" type="enum" enable="true" label="301" default="1" lvalues="302|303|304|305" />
+        <setting id="light1_id" type="number" label="306" default="1" enable="gt(-1,0)" visible="gt(-1,0)" />
+        <setting id="light2_id" type="number" label="307" default="2" enable="gt(-2,1)" visible="gt(-2,1)" />
+        <setting id="light3_id" type="number" label="308" default="3" enable="gt(-3,2)" visible="gt(-3,2)" />
+        <setting id="group_id" type="number" label="309" default="0" visible ="eq(-4,0)" enable="eq(-4,0)" />
+        <setting id="ambilight_info" type="action" label="310" visible="eq(-5,0) + eq(-7,0)" />
         <setting type="lsep" label="400" />
         <setting id="misc_initialflash" type="bool" label="401" default="true" />
     </category>

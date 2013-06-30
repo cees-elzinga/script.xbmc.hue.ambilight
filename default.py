@@ -120,7 +120,16 @@ class Hue:
 
   def flash_lights(self):
     self.logger.debuglog("class Hue: flashing lights")
-    self.light.flash_light()
+    if self.settings.light == 0:
+      self.light.flash_light()
+    else:
+      self.light[0].flash_light()
+      if self.settings.light > 1:
+        xbmc.sleep(1)
+        self.light[1].flash_light()
+      if self.settings.light > 2:
+        xbmc.sleep(1)
+        self.light[2].flash_light()
     
   def _parse_argv(self, args):
     try:
@@ -141,25 +150,55 @@ class Hue:
 
   def dim_lights(self):
     self.logger.debuglog("class Hue: dim lights")
-    self.light.dim_light()
+    if self.settings.light == 0:
+      self.light.dim_light()
+    else:
+      self.light[0].dim_light()
+      if self.settings.light > 1:
+        xbmc.sleep(1)
+        self.light[1].dim_light()
+      if self.settings.light > 2:
+        xbmc.sleep(1)
+        self.light[2].dim_light()
+
         
   def brighter_lights(self):
     self.logger.debuglog("class Hue: brighter lights")
-    self.light.brighter_light()
+    if self.settings.light == 0:
+      self.light.brighter_light()
+    else:
+      self.light[0].brighter_light()
+      if self.settings.light > 1:
+        xbmc.sleep(1)
+        self.light[1].brighter_light()
+      if self.settings.light > 2:
+        xbmc.sleep(1)
+        self.light[2].brighter_light()
+
 
   def update_settings(self):
     self.logger.debuglog("class Hue: update settings")
     self.logger.debuglog(settings)
     if self.settings.light == 0 and \
-        (self.light is None or self.light.group is not True):
+        (self.light is None or type(self.light) != Group):
       self.logger.debuglog("creating Group instance")
       self.light = Group(self.settings)
     elif self.settings.light > 0 and \
           (self.light is None or \
-          self.light.group == True or \
-          self.light.light != self.settings.light_id):
-      self.logger.debuglog("creating Light instance")
-      self.light = Light(self.settings)
+          type(self.light) == Group or \
+          len(self.light) == 0 or \
+          self.light[0].light != self.settings.light1_id or \
+          (self.settings.light > 1 and self.light[1].light != self.settings.light2_id) or \
+          (self.settings.light > 2 and self.light[2].light != self.settings.light3_id)):
+      self.logger.debuglog("creating Light instances")
+      self.light = [None] * self.settings.light
+      self.light[0] = Light(self.settings.light1_id, self.settings)
+      if self.settings.light > 1:
+        xbmc.sleep(1)
+        self.light[1] = Light(self.settings.light2_id, self.settings)
+      if self.settings.light > 2:
+        xbmc.sleep(1)
+        self.light[2] = Light(self.settings.light3_id, self.settings)
 
 class Screenshot:
   def __init__(self, pixels, capture_width, capture_height):
@@ -174,14 +213,16 @@ class Screenshot:
     return h, s, v
 
   def most_used_spectrum(self, spectrum, saturation, value):
-    ranges = [0] * 36
+    colorGroups = 18
+    colorHueRatio = 360 / colorGroups
+    ranges = [0] * colorGroups
     hue = {}
-    sat = [0] * 36
-    val = [0] * 36
+    sat = [0] * colorGroups
+    val = [0] * colorGroups
 
     for i in range(360):
       if spectrum.has_key(i):
-        colorIndex = int(i/10)
+        colorIndex = int(i/colorHueRatio)
         ranges[colorIndex] += spectrum[i]
         if hue.has_key(colorIndex):
           hue[colorIndex] = (hue[colorIndex] + i)/2
@@ -265,8 +306,6 @@ def run():
   player = None
   last = datetime.datetime.now()
 
-  hueLast, satLast, valLast = 0, 0, 255
-
   while not xbmc.abortRequested:
     
     if hue.settings.mode == 1: # theatre mode
@@ -291,24 +330,45 @@ def run():
         if player.playingvideo:
           screen = Screenshot(capture.getImage(), capture.getWidth(), capture.getHeight())
           h, s, v = screen.get_hsv()
-          hvec = abs(h - hueLast) % int(65535/2)
-          hvec = float(hvec/128.0)
-          svec = s - satLast
-          vvec = v - valLast
-          distance = math.sqrt(hvec * hvec + svec * svec + vvec * vvec)
-          if distance > 0:
-            duration = int(3 + 27 * distance/255)
-            logger.debuglog("distance %s duration %s" % (distance, duration))
-            hue.light.set_light2(h, s, v, duration)
-            hueLast = h
-            satLast = s
-            valLast = v
+          if hue.settings.light == 0:
+            fade_light_hsv(hue.light, h, s, v)
+          else:
+            fade_light_hsv(hue.light[0], h, s, v)
+            if hue.settings.light > 1:
+              xbmc.sleep(4)
+              fade_light_hsv(hue.light[1], h, s, v)
+            if hue.settings.light > 2:
+              xbmc.sleep(4)
+              fade_light_hsv(hue.light[2], h, s, v)
+
+def fade_light_hsv(light, h, s, v):
+  hvec = abs(h - light.hueLast) % int(65535/2)
+  hvec = float(hvec/128.0)
+  svec = s - light.satLast
+  vvec = v - light.valLast
+  distance = math.sqrt(hvec * hvec + svec * svec + vvec * vvec)
+  if distance > 0:
+    duration = int(3 + 27 * distance/255)
+    # logger.debuglog("distance %s duration %s" % (distance, duration))
+    light.set_light2(h, s, v, duration)
+
 
 def state_changed(state):
   logger.debuglog("state changed to: %s" % state)
   if state == "started":
     logger.debuglog("retrieving current setting before starting")
-    hue.light.get_current_setting()
+    
+    if hue.settings.light == 0:
+      hue.light.get_current_setting()
+    else:
+      hue.light[0].get_current_setting()
+      if hue.settings.light > 1:
+        xbmc.sleep(1)
+        hue.light[1].get_current_setting()
+      if hue.settings.light > 2:
+        xbmc.sleep(1)
+        hue.light[2].get_current_setting()
+
     #start capture when playback starts
     capture_width = 32 #100
     capture_height = int(capture_width / capture.getAspectRatio())

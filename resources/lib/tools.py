@@ -79,20 +79,23 @@ class Light:
   group = False
   livingwhite = False
 
-  def __init__(self, settings):
+  def __init__(self, light_id, settings):
     self.logger = Logger()
     if settings.debug:
       self.logger.debug()
 
     self.bridge_ip    = settings.bridge_ip
     self.bridge_user  = settings.bridge_user
-    self.light        = settings.light_id
+    self.light        = light_id
     self.override_hue = settings.override_hue
     self.dimmed_bri   = settings.dimmed_bri
     self.dimmed_hue   = settings.dimmed_hue
     self.undim_bri    = settings.undim_bri
     self.undim_hue    = settings.undim_hue
     self.override_undim_bri = settings.override_undim_bri
+    self.hueLast = 0
+    self.satLast = 0
+    self.valLast = 255
 
     self.get_current_setting()
     self.s = requests.Session()
@@ -120,7 +123,7 @@ class Light:
       self.livingwhite = True
 
   def set_light(self, data):
-    self.logger.debuglog("set_light: %s" % data)
+    self.logger.debuglog("set_light: %s: %s" % (self.light, data))
     self.request_url_put("http://%s/api/%s/lights/%s/state" % \
       (self.bridge_ip, self.bridge_user, self.light), data=data)
 
@@ -139,9 +142,13 @@ class Light:
           "bri": bri,
       })
 
-    # self.logger.debuglog("set_light2: %s" % data)
+    # self.logger.debuglog("set_light2: %s: %s" % (self.light, data))
     self.request_url_put("http://%s/api/%s/lights/%s/state" % \
       (self.bridge_ip, self.bridge_user, self.light), data=data)
+
+    self.hueLast = hue
+    self.satLast = sat
+    self.valLast = bri
 
   def flash_light(self):
     self.dim_light()
@@ -179,14 +186,16 @@ class Group(Light):
     if settings.debug:
       self.logger.debug()
 
-    Light.__init__(self, settings)
+    Light.__init__(self, settings.light1_id, settings)
     
     for light in self.get_lights():
-      settings.light_id = light
-      tmp = Light(settings)
+      tmp = Light(light, settings)
       tmp.get_current_setting()
       if tmp.start_setting['on']:
         self.lights[light] = tmp
+
+  def __len__(self):
+    return 0
 
   def get_lights(self):
     try:

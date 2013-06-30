@@ -14,7 +14,9 @@ class settings():
     
     self.mode                  = int(__addon__.getSetting("mode"))
     self.light                 = int(__addon__.getSetting("light"))
-    self.light_id              = int(__addon__.getSetting("light_id"))
+    self.light1_id              = int(__addon__.getSetting("light1_id"))
+    self.light2_id              = int(__addon__.getSetting("light2_id"))
+    self.light3_id              = int(__addon__.getSetting("light3_id"))
     self.group_id              = int(__addon__.getSetting("group_id"))
     self.misc_initialflash     = __addon__.getSetting("misc_initialflash") == "true"
 
@@ -39,7 +41,9 @@ class settings():
     'bridge_user: %s\n' % self.bridge_user + \
     'mode: %s\n' % str(self.mode) + \
     'light: %s\n' % str(self.light) + \
-    'light_id: %s\n' % str(self.light_id) + \
+    'light1_id: %s\n' % str(self.light1_id) + \
+    'light2_id: %s\n' % str(self.light2_id) + \
+    'light3_id: %s\n' % str(self.light3_id) + \
     'group_id: %s\n' % str(self.group_id) + \
     'misc_initialflash: %s\n' % str(self.misc_initialflash) + \
     'dimmed_bri: %s\n' % str(self.dimmed_bri) + \
