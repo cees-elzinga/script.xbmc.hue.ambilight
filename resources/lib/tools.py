@@ -172,6 +172,8 @@ class Light:
       data += ',"bri":%s' % self.undim_bri
     else:
       data += ',"bri":%s' % self.start_setting['bri']
+    if not self.livingwhite:
+      data += ',"sat":%s' % self.start_setting['sat']
     data += "}"
     self.set_light(data)
 
