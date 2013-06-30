@@ -34,6 +34,18 @@ fmt = capture.getImageFormat()
 
 capture.capture(capture_width, capture_height, xbmc.CAPTURE_FLAG_CONTINUOUS)
 
+class MyMonitor( xbmc.Monitor ):
+  def __init__( self, *args, **kwargs ):
+    xbmc.Monitor.__init__( self )
+
+  def onSettingsChanged( self ):
+    logger.debuglog("running in mode %s" % str(hue.settings.mode))
+    last = datetime.datetime.now()
+    hue.settings.readxml()
+    hue.update_settings()
+
+monitor = MyMonitor()
+
 class MyPlayer(xbmc.Player):
   playingvideo = None
 
@@ -232,13 +244,6 @@ def run():
   val2 = 0
 
   while not xbmc.abortRequested:
-
-    if datetime.datetime.now() - last > datetime.timedelta(seconds=10):
-      # check for settings updates every 10s (fixme: use callback function)
-      logger.debuglog("running in mode %s" % str(hue.settings.mode))
-      last = datetime.datetime.now()
-      hue.settings.readxml()
-      hue.update_settings()
     
     if hue.settings.mode == 1: # theatre mode
       if player == None:
