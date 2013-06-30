@@ -124,13 +124,14 @@ class Light:
     self.request_url_put("http://%s/api/%s/lights/%s/state" % \
       (self.bridge_ip, self.bridge_user, self.light), data=data)
 
-  def set_light2(self, hue, sat, bri):
+  def set_light2(self, hue, sat, bri, dur=20):
     if not self.livingwhite:
       data = json.dumps({
           "on": True,
           "hue": hue,
           "sat": sat,
           "bri": bri,
+          "transitiontime": dur
       })
     else:
       data = json.dumps({
@@ -208,12 +209,13 @@ class Group(Light):
     Light.request_url_put(self, "http://%s/api/%s/groups/%s/action" % \
       (self.bridge_ip, self.bridge_user, self.group_id), data=data)
 
-  def set_light2(self, hue, sat, bri):
+  def set_light2(self, hue, sat, bri, dur=20):
     data = json.dumps({
         "on": True,
         "hue": hue,
         "sat": sat,
         "bri": bri,
+        "transitiontime": dur
     })
     
     self.logger.debuglog("set_light2: %s" % data)

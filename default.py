@@ -6,6 +6,7 @@ import sys
 import colorsys
 import os
 import datetime
+import math
 
 __addon__      = xbmcaddon.Addon()
 __cwd__        = __addon__.getAddonInfo('path')
@@ -264,6 +265,8 @@ def run():
   player = None
   last = datetime.datetime.now()
 
+  hueLast, satLast, valLast = 0, 0, 255
+
   while not xbmc.abortRequested:
     
     if hue.settings.mode == 1: # theatre mode
@@ -281,14 +284,25 @@ def run():
       if player == None:
         player = MyPlayer()
       else:
-        xbmc.sleep(1)
+        xbmc.sleep(100)
 
-      capture.waitForCaptureStateChangeEvent(1000/15)
+      capture.waitForCaptureStateChangeEvent(1000/60)
       if capture.getCaptureState() == xbmc.CAPTURE_STATE_DONE:
         if player.playingvideo:
           screen = Screenshot(capture.getImage(), capture.getWidth(), capture.getHeight())
           h, s, v = screen.get_hsv()
-          hue.light.set_light2(h, s, v)
+          hvec = abs(h - hueLast) % int(65535/2)
+          hvec = float(hvec/128.0)
+          svec = s - satLast
+          vvec = v - valLast
+          distance = math.sqrt(hvec * hvec + svec * svec + vvec * vvec)
+          if distance > 0:
+            duration = int(3 + 27 * distance/255)
+            logger.debuglog("distance %s duration %s" % (distance, duration))
+            hue.light.set_light2(h, s, v, duration)
+            hueLast = h
+            satLast = s
+            valLast = v
 
 def state_changed(state):
   logger.debuglog("state changed to: %s" % state)
