@@ -113,12 +113,17 @@ class Light:
       (self.bridge_ip, self.bridge_user, self.light))
     j = r.json()
     self.start_setting = {}
-    self.start_setting['on'] = j['state']['on']
-    self.start_setting['bri'] = j['state']['bri']
+    state = j['state']
+    self.start_setting['on'] = state['on']
+    self.start_setting['bri'] = state['bri']
+    self.valLast = state['bri']
 
-    if j['state'].has_key('hue'):
-      self.start_setting['hue'] = j['state']['hue']
-      self.start_setting['sat'] = j['state']['sat']
+    if state.has_key('hue'):
+      self.start_setting['hue'] = state['hue']
+      self.start_setting['sat'] = state['sat']
+      self.hueLast = state['hue']
+      self.satLast = state['sat']
+    
     else:
       self.livingwhite = True
 
@@ -157,23 +162,33 @@ class Light:
   def dim_light(self):
     if self.override_hue:
       dimmed = '{"on":true,"bri":%s,"hue":%s,"transitiontime":4}' % (self.dimmed_bri, self.dimmed_hue)
+      self.hueLast = self.dimmed_hue
     else:
       dimmed = '{"on":true,"bri":%s,"transitiontime":4}' % self.dimmed_bri
+    self.valLast = self.dimmed_bri
     self.set_light(dimmed)
     if self.dimmed_bri == 0:
       off = '{"on":false}'
       self.set_light(off)
+      self.valLast = 0
 
   def brighter_light(self):
     data = '{"on":true,"transitiontime":4'
     if self.override_hue:
       data += ',"hue":%s' % self.undim_hue
+      self.hueLast = self.undim_hue
+    else:
+      data += ',"hue":%s' % self.start_setting['hue']
+      self.hueLast = self.start_setting['hue']
     if self.override_undim_bri:
       data += ',"bri":%s' % self.undim_bri
+      self.valLast = self.undim_bri
     else:
       data += ',"bri":%s' % self.start_setting['bri']
+      self.valLast = self.start_setting['bri']
     if not self.livingwhite:
       data += ',"sat":%s' % self.start_setting['sat']
+      self.satLast = self.start_setting['sat']
     data += "}"
     self.set_light(data)
 
