@@ -38,4 +38,6 @@
   <string id="600">Ambilight</string>
   <string id="601">Dim a group of lights when playback starts</string>
   <string id="602">Group ID to dim</string>
+  <string id="603">Ambilight minimum brightness</string>
+  <string id="604">Ambilight maximum brightness</string>
 </strings>

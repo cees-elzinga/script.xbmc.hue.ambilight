@@ -223,11 +223,10 @@ class HSVRatio:
     h = int(self.h*65535) # on a scale from 0 <-> 65535
     s = int(self.s*254)
     v = int(self.v*254)
-    if v == 0:
-      if settings.dimmed_bri > 0:
-        v = hue.settings.dimmed_bri
-      else:
-        v = 48
+    if v < hue.settings.ambilight_min:
+      v = hue.settings.ambilight_min
+    if v > hue.settings.ambilight_max:
+      v = hue.settings.ambilight_max
     return h, s, v
 
   def __repr__(self):

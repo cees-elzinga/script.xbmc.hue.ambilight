@@ -29,6 +29,9 @@
         <setting id="ambilight_dim" type="bool" label="601" default="false" />
         <setting id="ambilight_dim_group" type="number" label="602" default="0" enable="eq(-1,true)" visible="eq(-1,true)" />
         <setting type="sep" label="600" />
+        <setting id="ambilight_min" label="603" type="slider" default="0" range="0,5,100" option="int" />
+        <setting id="ambilight_max" label="604" type="slider" default="90" range="0,5,100" option="int" />
+        <setting type="sep" label="600" />
         <setting id="debug" type="bool" label="505" default="false" />
     </category>
 </settings>
