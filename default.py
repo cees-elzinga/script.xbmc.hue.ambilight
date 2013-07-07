@@ -239,7 +239,10 @@ class Screenshot:
     self.capture_height = capture_height
 
   def most_used_spectrum(self, spectrum, saturation, value, size, overall_value):
-    colorGroups = 18
+    # color bias/groups 6 - 36 in steps of 3
+    colorGroups = settings.color_bias
+    if colorGroups == 0:
+      colorGroups = 1
     colorHueRatio = 360 / colorGroups
 
     hsvRatios = []
@@ -247,7 +250,8 @@ class Screenshot:
 
     for i in range(360):
       if spectrum.has_key(i):
-        colorIndex = int(i/colorHueRatio)
+        #shift index to the right so that groups are centered on primary and secondary colors
+        colorIndex = int(((i+colorHueRatio/2) % 360)/colorHueRatio)
         pixelCount = spectrum[i]
 
         if hsvRatiosDict.has_key(colorIndex):

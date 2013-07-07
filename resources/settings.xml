@@ -32,6 +32,8 @@
         <setting id="ambilight_min" label="603" type="slider" default="0" range="0,5,100" option="int" />
         <setting id="ambilight_max" label="604" type="slider" default="90" range="0,5,100" option="int" />
         <setting type="sep" label="600" />
+        <setting id="color_bias" label="605" type="slider" default="18" range="6,3,36" option="int" />
+        <setting type="sep" label="600" />
         <setting id="debug" type="bool" label="505" default="false" />
     </category>
 </settings>

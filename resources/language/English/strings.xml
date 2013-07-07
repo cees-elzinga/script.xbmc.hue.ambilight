@@ -40,4 +40,5 @@
   <string id="602">Group ID to dim</string>
   <string id="603">Ambilight minimum brightness</string>
   <string id="604">Ambilight maximum brightness</string>
+  <string id="605">Color Bias. 6=variety with >1 light, 36=accuracy</string>
 </strings>

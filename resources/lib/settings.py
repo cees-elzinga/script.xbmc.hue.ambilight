@@ -14,9 +14,9 @@ class settings():
 
     self.mode                  = int(__addon__.getSetting("mode"))
     self.light                 = int(__addon__.getSetting("light"))
-    self.light1_id              = int(__addon__.getSetting("light1_id"))
-    self.light2_id              = int(__addon__.getSetting("light2_id"))
-    self.light3_id              = int(__addon__.getSetting("light3_id"))
+    self.light1_id             = int(__addon__.getSetting("light1_id"))
+    self.light2_id             = int(__addon__.getSetting("light2_id"))
+    self.light3_id             = int(__addon__.getSetting("light3_id"))
     self.group_id              = int(__addon__.getSetting("group_id"))
     self.misc_initialflash     = __addon__.getSetting("misc_initialflash") == "true"
 
@@ -30,8 +30,9 @@ class settings():
     self.ambilight_dim_group   = int(__addon__.getSetting("ambilight_dim_group"))
     self.ambilight_min         = int(int(__addon__.getSetting("ambilight_min").split(".")[0])*254/100)
     self.ambilight_max         = int(int(__addon__.getSetting("ambilight_max").split(".")[0])*254/100)
+    self.color_bias            = int(int(__addon__.getSetting("color_bias").split(".")[0])/3*3)
 
-    if (self.ambilight_min > self.ambilight_max):
+    if self.ambilight_min > self.ambilight_max:
         self.ambilight_min = self.ambilight_max
         __addon__.setSetting("ambilight_min", __addon__.getSetting("ambilight_max"))
 
@@ -61,4 +62,5 @@ class settings():
     'ambilight_dim_group: %s\n' % str(self.ambilight_dim_group) + \
     'ambilight_min: %s\n' % str(self.ambilight_min) + \
     'ambilight_max: %s\n' % str(self.ambilight_max) + \
+    'color_bias: %s\n' % str(self.color_bias) + \
     'debug: %s\n' % self.debug
