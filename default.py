@@ -201,6 +201,9 @@ class Hue:
         self.light[2] = Light(self.settings.light3_id, self.settings)
 
 class HSVRatio:
+  cyan_min = float(4.5/12.0)
+  cyan_max = float(7.75/12.0)
+
   def __init__(self, hue=0.0, saturation=0.0, value=0.0, ratio=0.0):
     self.h = hue
     self.s = saturation
@@ -220,9 +223,21 @@ class HSVRatio:
     
 
   def hue(self):
+    if self.s > 0.01:
+      if self.h < 0.5:
+        #yellow-green correction
+        self.h = self.h * 1.17
+        #cyan-green correction
+        if self.h > self.cyan_min:
+          self.h = self.cyan_min
+      else:
+        #cyan-blue correction
+        if self.h < self.cyan_max:
+          self.h = self.cyan_max
+
     h = int(self.h*65535) # on a scale from 0 <-> 65535
-    s = int(self.s*254)
-    v = int(self.v*254)
+    s = int(self.s*255)
+    v = int(self.v*255)
     if v < hue.settings.ambilight_min:
       v = hue.settings.ambilight_min
     if v > hue.settings.ambilight_max:
