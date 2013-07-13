@@ -79,20 +79,23 @@ class Light:
   group = False
   livingwhite = False
 
-  def __init__(self, settings):
+  def __init__(self, light_id, settings):
     self.logger = Logger()
     if settings.debug:
       self.logger.debug()
 
     self.bridge_ip    = settings.bridge_ip
     self.bridge_user  = settings.bridge_user
-    self.light        = settings.light_id
+    self.light        = light_id
     self.override_hue = settings.override_hue
     self.dimmed_bri   = settings.dimmed_bri
     self.dimmed_hue   = settings.dimmed_hue
     self.undim_bri    = settings.undim_bri
     self.undim_hue    = settings.undim_hue
     self.override_undim_bri = settings.override_undim_bri
+    self.hueLast = 0
+    self.satLast = 0
+    self.valLast = 255
 
     self.get_current_setting()
     self.s = requests.Session()
@@ -110,27 +113,33 @@ class Light:
       (self.bridge_ip, self.bridge_user, self.light))
     j = r.json()
     self.start_setting = {}
-    self.start_setting['on'] = j['state']['on']
-    self.start_setting['bri'] = j['state']['bri']
+    state = j['state']
+    self.start_setting['on'] = state['on']
+    self.start_setting['bri'] = state['bri']
+    self.valLast = state['bri']
 
-    if j['state'].has_key('hue'):
-      self.start_setting['hue'] = j['state']['hue']
-      self.start_setting['sat'] = j['state']['sat']
+    if state.has_key('hue'):
+      self.start_setting['hue'] = state['hue']
+      self.start_setting['sat'] = state['sat']
+      self.hueLast = state['hue']
+      self.satLast = state['sat']
+    
     else:
       self.livingwhite = True
 
   def set_light(self, data):
-    self.logger.debuglog("set_light: %s" % data)
+    self.logger.debuglog("set_light: %s: %s" % (self.light, data))
     self.request_url_put("http://%s/api/%s/lights/%s/state" % \
       (self.bridge_ip, self.bridge_user, self.light), data=data)
 
-  def set_light2(self, hue, sat, bri):
+  def set_light2(self, hue, sat, bri, dur=20):
     if not self.livingwhite:
       data = json.dumps({
           "on": True,
           "hue": hue,
           "sat": sat,
           "bri": bri,
+          "transitiontime": dur
       })
     else:
       data = json.dumps({
@@ -138,9 +147,13 @@ class Light:
           "bri": bri,
       })
 
-    self.logger.debuglog("set_light2: %s" % data)
+    # self.logger.debuglog("set_light2: %s: %s" % (self.light, data))
     self.request_url_put("http://%s/api/%s/lights/%s/state" % \
       (self.bridge_ip, self.bridge_user, self.light), data=data)
+
+    self.hueLast = hue
+    self.satLast = sat
+    self.valLast = bri
 
   def flash_light(self):
     self.dim_light()
@@ -149,21 +162,33 @@ class Light:
   def dim_light(self):
     if self.override_hue:
       dimmed = '{"on":true,"bri":%s,"hue":%s,"transitiontime":4}' % (self.dimmed_bri, self.dimmed_hue)
+      self.hueLast = self.dimmed_hue
     else:
       dimmed = '{"on":true,"bri":%s,"transitiontime":4}' % self.dimmed_bri
+    self.valLast = self.dimmed_bri
     self.set_light(dimmed)
     if self.dimmed_bri == 0:
       off = '{"on":false}'
       self.set_light(off)
+      self.valLast = 0
 
   def brighter_light(self):
     data = '{"on":true,"transitiontime":4'
     if self.override_hue:
       data += ',"hue":%s' % self.undim_hue
+      self.hueLast = self.undim_hue
+    else:
+      data += ',"hue":%s' % self.start_setting['hue']
+      self.hueLast = self.start_setting['hue']
     if self.override_undim_bri:
       data += ',"bri":%s' % self.undim_bri
+      self.valLast = self.undim_bri
     else:
       data += ',"bri":%s' % self.start_setting['bri']
+      self.valLast = self.start_setting['bri']
+    if not self.livingwhite:
+      data += ',"sat":%s' % self.start_setting['sat']
+      self.satLast = self.start_setting['sat']
     data += "}"
     self.set_light(data)
 
@@ -178,14 +203,16 @@ class Group(Light):
     if settings.debug:
       self.logger.debug()
 
-    Light.__init__(self, settings)
+    Light.__init__(self, settings.light1_id, settings)
     
     for light in self.get_lights():
-      settings.light_id = light
-      tmp = Light(settings)
+      tmp = Light(light, settings)
       tmp.get_current_setting()
       if tmp.start_setting['on']:
         self.lights[light] = tmp
+
+  def __len__(self):
+    return 0
 
   def get_lights(self):
     try:
@@ -208,12 +235,13 @@ class Group(Light):
     Light.request_url_put(self, "http://%s/api/%s/groups/%s/action" % \
       (self.bridge_ip, self.bridge_user, self.group_id), data=data)
 
-  def set_light2(self, hue, sat, bri):
+  def set_light2(self, hue, sat, bri, dur=20):
     data = json.dumps({
         "on": True,
         "hue": hue,
         "sat": sat,
         "bri": bri,
+        "transitiontime": dur
     })
     
     self.logger.debuglog("set_light2: %s" % data)

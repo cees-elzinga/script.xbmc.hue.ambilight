@@ -14,9 +14,13 @@
   <string id="301">Enable</string>
   <string id="302">a group of lights</string>
   <string id="303">a single light</string>
-  <string id="304">Light bulb ID</string>
-  <string id="305">Group id (0=all lights)</string>
-  <string id="306">Ambilight using a group of lights is too slow (but you're welcome to try)</string>
+  <string id="304">two lights</string>
+  <string id="305">three light</string>
+  <string id="306">Light bulb ID 1</string>
+  <string id="307">Light bulb ID 2</string>
+  <string id="308">Light bulb ID 3</string>
+  <string id="309">Group id (0=all lights)</string>
+  <string id="310">Ambilight using a group of lights is too slow (but you're welcome to try)</string>
 
   <string id="400">Misc settings</string>
   <string id="401">Enable initial flash</string>
@@ -34,4 +38,7 @@
   <string id="600">Ambilight</string>
   <string id="601">Dim a group of lights when playback starts</string>
   <string id="602">Group ID to dim</string>
+  <string id="603">Ambilight minimum brightness</string>
+  <string id="604">Ambilight maximum brightness</string>
+  <string id="605">Color Bias. 6=variety with >1 light, 36=accuracy</string>
 </strings>
