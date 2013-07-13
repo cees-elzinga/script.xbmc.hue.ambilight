@@ -49,6 +49,7 @@ Note for Raspberry Pi users:
 
 Release history
 ---------------
+  * 2013-07-13 v 0.6.0 General improvements all around (by robwalch)
   * 2013-05-25 v 0.5.0 Debug logging, livingwhite lights
   * 2013-05-04 v 0.4.0 Advanced settings
   * 2013-04-25 v 0.3.6 Custom dimmed brightness in theatre mode

@@ -1,3 +1,6 @@
+0.6.0
+ - general improvements all around
+
 0.5.0
  - [feature] support livingwhite lights
  - [feature] dim lights using current Hue settings
