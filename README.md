@@ -3,18 +3,8 @@ script.xbmc.hue.ambilight
 
 [![Screenshot](http://meethue.files.wordpress.com/2013/07/youtube.png?w=400)](http://www.youtube.com/watch?v=YGM5rwJBh4o)
 
-An XBMC add-on that controls Philips Hue lights. It supports two modes of operation:
+An XBMC add-on that controls Philips Hue lights. It supports two modes of operation. In "Theatre mode" the add-on dims the the Philips Hue lights as soon as a movie starts playing, and turns the lights back on once the movie is done. "Ambilight mode" turns your Philips Hue lights in a room-sized ambilight
 
- - Theatre mode
-
-Dims the the Philips Hue lights as soon as a movie starts playing, and turns the lights back on once the movie is done
-
-- Ambilight mode
-
-Turns your Philips Hue lights in a room-sized ambilight
-
-Donations
----------
 If you enjoy the add-on, donations are always welcome :)
 
 [![PayPal]( https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=48ZKAZK6QHNGJ&lc=NL&item_name=script%2exbmc%2ehue&currency_code=EUR)
