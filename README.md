@@ -1,7 +1,7 @@
 script.xbmc.hue.ambilight
 =========================
 
-![ScreenShot](http://meethue.files.wordpress.com/2013/01/plugin2.png?w=400)
+[![Screenshot](http://meethue.files.wordpress.com/2013/07/youtube.png?w=400)](http://www.youtube.com/watch?v=YGM5rwJBh4o)
 
 An XBMC add-on that controls Philips Hue lights. It supports two modes of operation:
 
