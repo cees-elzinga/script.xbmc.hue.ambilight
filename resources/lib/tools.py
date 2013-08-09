@@ -87,6 +87,7 @@ class Light:
     self.bridge_ip    = settings.bridge_ip
     self.bridge_user  = settings.bridge_user
     self.light        = light_id
+    self.dim_time     = settings.dim_time
     self.override_hue = settings.override_hue
     self.dimmed_bri   = settings.dimmed_bri
     self.dimmed_hue   = settings.dimmed_hue
@@ -156,15 +157,17 @@ class Light:
     self.valLast = bri
 
   def flash_light(self):
-    self.dim_light()
-    self.brighter_light()
+    self.dim_light(dim_time=4)
+    self.brighter_light(dim_time=4)
 
-  def dim_light(self):
+  def dim_light(self, dim_time=None):
+    if dim_time == None:
+      dim_time = self.dim_time
     if self.override_hue:
-      dimmed = '{"on":true,"bri":%s,"hue":%s,"transitiontime":4}' % (self.dimmed_bri, self.dimmed_hue)
+      dimmed = '{"on":true,"bri":%s,"hue":%s,"transitiontime":%d}' % (self.dimmed_bri, self.dimmed_hue, dim_time)
       self.hueLast = self.dimmed_hue
     else:
-      dimmed = '{"on":true,"bri":%s,"transitiontime":4}' % self.dimmed_bri
+      dimmed = '{"on":true,"bri":%s,"transitiontime":%d}' % (self.dimmed_bri, dim_time)
     self.valLast = self.dimmed_bri
     self.set_light(dimmed)
     if self.dimmed_bri == 0:
@@ -172,8 +175,10 @@ class Light:
       self.set_light(off)
       self.valLast = 0
 
-  def brighter_light(self):
-    data = '{"on":true,"transitiontime":4'
+  def brighter_light(self, dim_time=None):
+    if dim_time == None:
+		dim_time = self.dim_time
+    data = '{"on":true,"transitiontime":%d' % (dim_time)
     if self.override_hue:
       data += ',"hue":%s' % self.undim_hue
       self.hueLast = self.undim_hue

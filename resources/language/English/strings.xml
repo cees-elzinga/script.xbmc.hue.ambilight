@@ -29,6 +29,7 @@
   <string id="510">Changes will be active after restarting XBMC</string>
   <string id="501">Dimmed brightness</string>
   <string id="502">Undimmed brightness</string>
+  <string id="507">Dim/Undim transition time</string>
   <string id="506">Override Hue colors</string>
   <string id="503">Dimmed Hue color</string>
   <string id="504">Undimmed Hue color</string>
