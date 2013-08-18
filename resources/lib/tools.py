@@ -157,17 +157,18 @@ class Light:
     self.valLast = bri
 
   def flash_light(self):
-    self.dim_light(dim_time=4)
-    self.brighter_light(dim_time=4)
+    self.dim_light()
+    time.sleep(self.dim_time/10)
+    self.brighter_light()
 
-  def dim_light(self, dim_time=None):
-    if dim_time == None:
-      dim_time = self.dim_time
-    if self.override_hue:
-      dimmed = '{"on":true,"bri":%s,"hue":%s,"transitiontime":%d}' % (self.dimmed_bri, self.dimmed_hue, dim_time)
+  def dim_light(self):
+    if not self.livingwhite and self.override_hue:
+      dimmed = '{"on":true,"bri":%s,"hue":%s,"transitiontime":%d}' % \
+        (self.dimmed_bri, self.dimmed_hue, self.dim_time)
       self.hueLast = self.dimmed_hue
     else:
-      dimmed = '{"on":true,"bri":%s,"transitiontime":%d}' % (self.dimmed_bri, dim_time)
+      dimmed = '{"on":true,"bri":%s,"transitiontime":%d}' % \
+        (self.dimmed_bri, self.dim_time)
     self.valLast = self.dimmed_bri
     self.set_light(dimmed)
     if self.dimmed_bri == 0:
@@ -175,16 +176,8 @@ class Light:
       self.set_light(off)
       self.valLast = 0
 
-  def brighter_light(self, dim_time=None):
-    if dim_time == None:
-		dim_time = self.dim_time
-    data = '{"on":true,"transitiontime":%d' % (dim_time)
-    if self.override_hue:
-      data += ',"hue":%s' % self.undim_hue
-      self.hueLast = self.undim_hue
-    else:
-      data += ',"hue":%s' % self.start_setting['hue']
-      self.hueLast = self.start_setting['hue']
+  def brighter_light(self):
+    data = '{"on":true,"transitiontime":%d' % (self.dim_time)
     if self.override_undim_bri:
       data += ',"bri":%s' % self.undim_bri
       self.valLast = self.undim_bri
@@ -194,6 +187,13 @@ class Light:
     if not self.livingwhite:
       data += ',"sat":%s' % self.start_setting['sat']
       self.satLast = self.start_setting['sat']
+
+      if self.override_hue:
+        data += ',"hue":%s' % self.undim_hue
+        self.hueLast = self.undim_hue
+      else:
+        data += ',"hue":%s' % self.start_setting['hue']
+        self.hueLast = self.start_setting['hue']
     data += "}"
     self.set_light(data)
 

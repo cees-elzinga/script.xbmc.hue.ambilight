@@ -1,3 +1,7 @@
+0.6.1
+ - [feature] control dim/undim times from settings
+ - [fix] crash on livingwhite lights
+
 0.6.0
  - general improvements all around
 
