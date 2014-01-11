@@ -222,18 +222,19 @@ class HSVRatio:
       self.v = (self.v + overall_value)/2
     
 
-  def hue(self):
-    if self.s > 0.01:
-      if self.h < 0.5:
-        #yellow-green correction
-        self.h = self.h * 1.17
-        #cyan-green correction
-        if self.h > self.cyan_min:
-          self.h = self.cyan_min
-      else:
-        #cyan-blue correction
-        if self.h < self.cyan_max:
-          self.h = self.cyan_max
+  def hue(self, fullSpectrum):
+    if fullSpectrum != True:
+      if self.s > 0.01:
+        if self.h < 0.5:
+          #yellow-green correction
+          self.h = self.h * 1.17
+          #cyan-green correction
+          if self.h > self.cyan_min:
+            self.h = self.cyan_min
+        else:
+          #cyan-blue correction
+          if self.h < self.cyan_max:
+            self.h = self.cyan_max
 
     h = int(self.h*65535) # on a scale from 0 <-> 65535
     s = int(self.s*255)
@@ -390,7 +391,8 @@ def run():
               fade_light_hsv(hue.light[2], hsvRatios[2])
 
 def fade_light_hsv(light, hsvRatio):
-  h, s, v = hsvRatio.hue()
+  fullSpectrum = light.fullSpectrum
+  h, s, v = hsvRatio.hue(fullSpectrum)
   hvec = abs(h - light.hueLast) % int(65535/2)
   hvec = float(hvec/128.0)
   svec = s - light.satLast

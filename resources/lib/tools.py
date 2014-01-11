@@ -78,6 +78,7 @@ class Light:
   start_setting = None
   group = False
   livingwhite = False
+  fullSpectrum = False
 
   def __init__(self, light_id, settings):
     self.logger = Logger()
@@ -118,6 +119,9 @@ class Light:
     self.start_setting['on'] = state['on']
     self.start_setting['bri'] = state['bri']
     self.valLast = state['bri']
+    
+    modelid = j['modelid']
+    self.fullSpectrum = ((modelid == 'LST001') or (modelid == 'LLC007'))
 
     if state.has_key('hue'):
       self.start_setting['hue'] = state['hue']
