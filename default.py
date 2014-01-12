@@ -44,6 +44,7 @@ class MyMonitor( xbmc.Monitor ):
 monitor = MyMonitor()
 
 class MyPlayer(xbmc.Player):
+  duration = 0
   playingvideo = None
 
   def __init__(self):
@@ -52,27 +53,28 @@ class MyPlayer(xbmc.Player):
   def onPlayBackStarted(self):
     if self.isPlayingVideo():
       self.playingvideo = True
-      state_changed("started")
+      self.duration = self.getTotalTime()
+      state_changed("started", self.duration)
 
   def onPlayBackPaused(self):
     if self.isPlayingVideo():
       self.playingvideo = False
-      state_changed("paused")
+      state_changed("paused", self.duration)
 
   def onPlayBackResumed(self):
     if self.isPlayingVideo():
       self.playingvideo = True
-      state_changed("resumed")
+      state_changed("resumed", self.duration)
 
   def onPlayBackStopped(self):
     if self.playingvideo:
       self.playingvideo = False
-      state_changed("stopped")
+      state_changed("stopped", self.duration)
 
   def onPlayBackEnded(self):
     if self.playingvideo:
       self.playingvideo = False
-      state_changed("stopped")
+      state_changed("stopped", self.duration)
 
 class Hue:
   params = None
@@ -404,8 +406,12 @@ def fade_light_hsv(light, hsvRatio):
     light.set_light2(h, s, v, duration)
 
 
-def state_changed(state):
+def state_changed(state, duration):
   logger.debuglog("state changed to: %s" % state)
+  if duration < 300 and hue.settings.misc_disableshort:
+    logger.debuglog("add-on disabled for short movies")
+    return
+
   if state == "started":
     logger.debuglog("retrieving current setting before starting")
     

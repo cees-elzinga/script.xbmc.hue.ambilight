@@ -24,6 +24,7 @@
 
   <string id="400">Misc settings</string>
   <string id="401">Enable initial flash</string>
+  <string id="402">Disable for short movies</string>
 
   <string id="500">Advanced settings</string>
   <string id="510">Changes will be active after restarting XBMC</string>
