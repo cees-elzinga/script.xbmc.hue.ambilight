@@ -5,9 +5,19 @@ script.xbmc.hue.ambilight
 
 An XBMC add-on that controls Philips Hue lights. In "Theatre mode" the add-on dims the the Philips Hue lights as soon as a movie starts playing, and turns the lights back on once the movie is done. "Ambilight mode" turns your Philips Hue lights in a room-sized ambilight
 
-If you enjoy the add-on, donations are always welcome :)
+No longer maintained
+--------------------
 
-[![PayPal]( https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=48ZKAZK6QHNGJ&lc=NL&item_name=script%2exbmc%2ehue&currency_code=EUR)
+This project is no longer maintained. Feel free to fork away and have fun!
+
+You might be interested in these forks that are still being developed:
+
+ - https://github.com/fritsch/script.kodi.hue.ambilight
+ - https://github.com/michaelrcarroll/script.kodi.hue.ambilight
+ - https://github.com/ErlendSB/script.kodi.hue.ambilight
+ - https://github.com/robwalch/script.xbmc.hue.ambilight
+ 
+Want your project added here? You can contact me on my Github profile page.
 
 Installation
 ------------
@@ -48,10 +58,3 @@ Release history
   * 2013-04-01 v 0.3.3 Rename to script.xbmc.hue.ambilight
   * 2013-02-25 v 0.3.1 Improved handling for grouped lights
   * 2013-01-27 v 0.1.0 Initial release
-
-Contributing
-------------
-
-Want to contribute? Great! I don't plan on actvily extending this code, but will accept push requests and help with bug reports. You can contact me on my Github profile page.
-
-Feel free to fork away and have fun!
